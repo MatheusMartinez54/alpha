@@ -1,0 +1,16 @@
+:root {
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  color: #fff;
+  background: #0f0f0f;
+  font-synthesis: none;
+  --bg: #0f0f0f;
+  --surface: #171717;
+  --surface-2: #202020;
+  --text: #fff;
+  --muted: #a5a5a5;
+  --accent: #f5c400;
+  --accent-ink: #161000;
+  --line: rgba(255, 255, 255, 0.1);
+  --radius: 14px;
+  --max-width: 1180px;
+}
