@@ -2,8 +2,8 @@ import ProductCard from '../../components/ProductCard/ProductCard.jsx';
 import CategoryMenu from '../../components/CategoryMenu/CategoryMenu.jsx';
 import { useStore } from '../../context/StoreContext.jsx';
 import Loading from '../../components/Loading/Loading.jsx';
-import { Search } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { ArrowLeft, Search } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 function Products() {
   const { products } = useStore();
@@ -24,6 +24,11 @@ function Products() {
   return (
     <main className="main container catalog-page">
       <div className="commerce-heading">
+        {category && (
+          <Link className="back-link" to="/">
+            <ArrowLeft size={16} /> Voltar para início
+          </Link>
+        )}
         <span className="eyebrow">Catálogo completo</span>
         <h1>{query ? `Busca: ${params.get('busca')}` : 'Produtos'}</h1>
       </div>
