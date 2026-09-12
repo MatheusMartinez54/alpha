@@ -1,33 +1,81 @@
-import { NavLink, Route, Routes } from 'react-router-dom';
-const sections = ['produtos', 'categorias', 'pedidos', 'clientes', 'configuracoes'];
-function AdminPage({ title }) {
+import { Navigate, Route, Routes } from 'react-router-dom';
+import AdminLayout from '../components/Admin/AdminLayout/AdminLayout.jsx';
+import Dashboard from '../pages/Admin/Dashboard/Dashboard.jsx';
+import ProductsPage from '../pages/Admin/Products/Products.jsx';
+import CategoriesPage from '../pages/Admin/Categories/Categories.jsx';
+
+function AdminPage({ title, description }) {
   return (
-    <main className="main container">
-      <span className="eyebrow">Painel ALPHA</span>
-      <h1>{title}</h1>
-      <div className="empty">
-        <p>Área preparada para integração com Firebase e operações do catálogo.</p>
+    <div className="admin-empty-state">
+      <div className="admin-empty-state__content">
+        <span className="eyebrow">Painel ALPHA</span>
+        <h2>{title}</h2>
+        <p>{description}</p>
       </div>
-    </main>
+    </div>
   );
 }
+
 function AdminRoutes() {
   return (
-    <>
-      <nav className="admin-nav container">
-        {sections.map((section) => (
-          <NavLink key={section} to={`/admin/${section}`}>
-            {section}
-          </NavLink>
-        ))}
-      </nav>
-      <Routes>
-        <Route index element={<AdminPage title="Visão geral" />} />
-        {sections.map((section) => (
-          <Route key={section} path={section} element={<AdminPage title={section[0].toUpperCase() + section.slice(1)} />} />
-        ))}
-      </Routes>
-    </>
+    <Routes>
+      <Route
+        index
+        element={
+          <AdminLayout title="Dashboard" subtitle="Visão geral da sua loja">
+            <Dashboard />
+          </AdminLayout>
+        }
+      />
+
+      <Route
+        path="produtos"
+        element={
+          <AdminLayout title="Produtos" subtitle="Gerencie os produtos da sua loja">
+            <ProductsPage />
+          </AdminLayout>
+        }
+      />
+
+      <Route
+        path="pedidos"
+        element={
+          <AdminLayout title="Pedidos" subtitle="Acompanhe o fluxo de vendas">
+            <AdminPage title="Pedidos" description="Os pedidos serão detalhados e integrados futuramente ao sistema administrativo." />
+          </AdminLayout>
+        }
+      />
+
+      <Route
+        path="categorias"
+        element={
+          <AdminLayout title="Categorias" subtitle="Organize os produtos da sua loja">
+            <CategoriesPage />
+          </AdminLayout>
+        }
+      />
+
+      <Route
+        path="clientes"
+        element={
+          <AdminLayout title="Clientes" subtitle="Dados e relacionamento com o público">
+            <AdminPage title="Clientes" description="A gestão de clientes será integrada ao sistema em uma próxima etapa." />
+          </AdminLayout>
+        }
+      />
+
+      <Route
+        path="configuracoes"
+        element={
+          <AdminLayout title="Configurações" subtitle="Ajustes gerais da loja">
+            <AdminPage title="Configurações" description="As configurações da loja e do painel serão disponibilizadas futuramente." />
+          </AdminLayout>
+        }
+      />
+
+      <Route path="*" element={<Navigate to="/admin" replace />} />
+    </Routes>
   );
 }
+
 export default AdminRoutes;

@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Header from '../components/Header/Header.jsx';
 import Footer from '../components/Footer/Footer.jsx';
 import Home from '../pages/Home/Home.jsx';
@@ -10,9 +10,12 @@ import AdminRoutes from './AdminRoutes.jsx';
 import AdminLogin from '../pages/Admin/Login/Login.jsx';
 
 function AppRoutes() {
+  const location = useLocation();
+  const isAdminRoute = /^\/admin(?:\/|$)/.test(location.pathname);
+
   return (
     <>
-      <Header />
+      {!isAdminRoute && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/produtos" element={<Products />} />
@@ -22,7 +25,7 @@ function AppRoutes() {
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </>
   );
 }
