@@ -4,12 +4,11 @@ import CategoryModal from '../../../components/Admin/CategoryModal/CategoryModal
 import CategoryProductsModal from '../../../components/Admin/CategoryProductsModal/CategoryProductsModal.jsx';
 import StatusBadge from '../../../components/Admin/StatusBadge/StatusBadge.jsx';
 import EmptyState from '../../../components/Admin/EmptyState/EmptyState.jsx';
-import { mockCategories, mockProducts } from '../../../data/adminMocks.js';
+import { useStore } from '../../../context/StoreContext.jsx';
 import '../../../styles/admin-catalog.css';
 
 function CategoriesPage() {
-  const [categories, setCategories] = useState(mockCategories);
-  const [products, setProducts] = useState(mockProducts);
+  const { categories, setCategories, products, setProducts } = useStore();
   const [search, setSearch] = useState('');
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
@@ -92,7 +91,13 @@ function CategoriesPage() {
       <div className="admin-toolbar">
         <label className="admin-search">
           <Search size={16} aria-hidden="true" />
-          <input type="search" aria-label="Buscar categoria" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar categoria" />
+          <input
+            type="search"
+            aria-label="Buscar categoria"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Buscar categoria"
+          />
         </label>
         <button type="button" className="button" onClick={openCreateModal}>
           <Plus size={16} aria-hidden="true" />
@@ -127,18 +132,36 @@ function CategoriesPage() {
                 return (
                   <tr key={category.id}>
                     <th scope="row">
-                      <strong className="admin-table__truncate" title={category.name}>{category.name}</strong>
+                      <strong className="admin-table__truncate" title={category.name}>
+                        {category.name}
+                      </strong>
                     </th>
-                    <td><span className="admin-table__count">{categoryProducts.length} {categoryProducts.length === 1 ? 'produto' : 'produtos'}</span></td>
+                    <td>
+                      <span className="admin-table__count">
+                        {categoryProducts.length} {categoryProducts.length === 1 ? 'produto' : 'produtos'}
+                      </span>
+                    </td>
                     <td>
                       <StatusBadge active={category.active} />
                     </td>
                     <td>
                       <div className="admin-table__actions">
-                        <button type="button" className="admin-table__action" aria-label={`Editar ${category.name}`} title="Editar" onClick={() => openEditModal(category)}>
+                        <button
+                          type="button"
+                          className="admin-table__action"
+                          aria-label={`Editar ${category.name}`}
+                          title="Editar"
+                          onClick={() => openEditModal(category)}
+                        >
                           <Pencil size={16} aria-hidden="true" />
                         </button>
-                        <button type="button" className="admin-table__action" aria-label={`Ver produtos de ${category.name}`} title="Ver produtos" onClick={() => openProductsModal(category)}>
+                        <button
+                          type="button"
+                          className="admin-table__action"
+                          aria-label={`Ver produtos de ${category.name}`}
+                          title="Ver produtos"
+                          onClick={() => openProductsModal(category)}
+                        >
                           <Eye size={16} aria-hidden="true" />
                         </button>
                         <button

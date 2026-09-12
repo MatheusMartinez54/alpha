@@ -3,6 +3,7 @@ import AdminLayout from '../components/Admin/AdminLayout/AdminLayout.jsx';
 import Dashboard from '../pages/Admin/Dashboard/Dashboard.jsx';
 import ProductsPage from '../pages/Admin/Products/Products.jsx';
 import CategoriesPage from '../pages/Admin/Categories/Categories.jsx';
+import OrdersPage from '../pages/Admin/Orders/Orders.jsx';
 
 function AdminPage({ title, description }) {
   return (
@@ -41,7 +42,7 @@ function AdminRoutes() {
         path="pedidos"
         element={
           <AdminLayout title="Pedidos" subtitle="Acompanhe o fluxo de vendas">
-            <AdminPage title="Pedidos" description="Os pedidos serão detalhados e integrados futuramente ao sistema administrativo." />
+            <OrdersPage />
           </AdminLayout>
         }
       />
@@ -51,15 +52,6 @@ function AdminRoutes() {
         element={
           <AdminLayout title="Categorias" subtitle="Organize os produtos da sua loja">
             <CategoriesPage />
-          </AdminLayout>
-        }
-      />
-
-      <Route
-        path="clientes"
-        element={
-          <AdminLayout title="Clientes" subtitle="Dados e relacionamento com o público">
-            <AdminPage title="Clientes" description="A gestão de clientes será integrada ao sistema em uma próxima etapa." />
           </AdminLayout>
         }
       />

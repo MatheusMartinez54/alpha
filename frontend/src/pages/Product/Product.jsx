@@ -1,10 +1,12 @@
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Plus } from 'lucide-react';
-import { products } from '../../data/products.js';
+import { useStore } from '../../context/StoreContext.jsx';
 import { useCart } from '../../context/CartContext.jsx';
 function Product() {
+  const { products } = useStore();
   const { id } = useParams();
   const product = products.find((item) => item.id === id) || products[0];
+  const shortName = product.short || product.name.slice(0, 8).toUpperCase();
   const { addItem } = useCart();
   return (
     <main className="main container product-detail">
@@ -14,7 +16,7 @@ function Product() {
       <div className="detail-layout">
         <div className="detail-art" style={{ background: product.color, backgroundImage: `url(${product.image})` }}>
           <span>{product.tag}</span>
-          <strong>{product.short}</strong>
+          <strong>{shortName}</strong>
         </div>
         <div className="detail-copy">
           <span className="eyebrow">{product.categoryName}</span>

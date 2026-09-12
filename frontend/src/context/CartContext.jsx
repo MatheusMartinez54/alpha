@@ -10,9 +10,10 @@ export function CartProvider({ children }) {
         : [...current, { ...product, quantity: 1 }];
     });
   const removeItem = (id) => setItems((current) => current.filter((item) => item.id !== id));
+  const clearCart = () => setItems([]);
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
   const total = items.reduce((sum, item) => sum + (item.promotionalPrice ?? item.price) * item.quantity, 0);
-  const value = useMemo(() => ({ items, addItem, removeItem, totalItems, total }), [items, totalItems, total]);
+  const value = useMemo(() => ({ items, addItem, removeItem, clearCart, totalItems, total }), [items, totalItems, total]);
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 export function useCart() {

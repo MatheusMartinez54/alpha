@@ -1,12 +1,11 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { ArrowLeft, LayoutDashboard, LogOut, Package, Settings, ShoppingCart, Tags, Users } from 'lucide-react';
+import { ArrowLeft, LayoutDashboard, LogOut, Package, Settings, ShoppingCart, Tags } from 'lucide-react';
 
 const menuItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/produtos', label: 'Produtos', icon: Package },
   { to: '/admin/pedidos', label: 'Pedidos', icon: ShoppingCart },
   { to: '/admin/categorias', label: 'Categorias', icon: Tags },
-  { to: '/admin/clientes', label: 'Clientes', icon: Users },
 ];
 
 function AdminSidebar({ isOpen, onClose }) {

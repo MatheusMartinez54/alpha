@@ -186,6 +186,46 @@ p {
   overflow: auto;
   padding: 19px 0;
 }
+.contact-section {
+  align-items: end;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  margin-top: 76px;
+  padding: 34px 0 70px;
+}
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+.contact-links a {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.contact-links a:hover {
+  color: var(--text);
+}
+.checkout-form {
+  display: grid;
+  gap: 18px;
+  max-width: 620px;
+}
+.checkout-form label {
+  color: var(--text-h);
+  display: grid;
+  gap: 8px;
+  text-align: left;
+}
+.checkout-form select {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 12px;
+}
+.checkout-form .summary {
+  margin-top: 14px;
+}
 .featured {
   padding-top: 76px;
 }

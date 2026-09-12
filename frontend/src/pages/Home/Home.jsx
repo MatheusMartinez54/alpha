@@ -2,8 +2,9 @@ import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CategoryMenu from '../../components/CategoryMenu/CategoryMenu.jsx';
 import ProductCard from '../../components/ProductCard/ProductCard.jsx';
-import { products } from '../../data/products.js';
+import { useStore } from '../../context/StoreContext.jsx';
 function Home() {
+  const { products } = useStore();
   return (
     <main className="main">
       <section className="container hero">
@@ -47,6 +48,23 @@ function Home() {
             .map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
+        </div>
+      </section>
+      <section className="container contact-section">
+        <div>
+          <span className="eyebrow">Fale com a loja</span>
+          <h2>Contatos</h2>
+        </div>
+        <div className="contact-links">
+          <a href="https://wa.me/5565999990001" target="_blank" rel="noreferrer">
+            WhatsApp Cuiabá
+          </a>
+          <a href="https://wa.me/5565999990002" target="_blank" rel="noreferrer">
+            WhatsApp VG
+          </a>
+          <a href="https://instagram.com/alpha.lojas" target="_blank" rel="noreferrer">
+            Instagram ALPHA
+          </a>
         </div>
       </section>
     </main>

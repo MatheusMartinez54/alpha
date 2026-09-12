@@ -1,10 +1,11 @@
 import ProductCard from '../../components/ProductCard/ProductCard.jsx';
-import { products } from '../../data/products.js';
+import { useStore } from '../../context/StoreContext.jsx';
 import Loading from '../../components/Loading/Loading.jsx';
 import { Search } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 function Products() {
+  const { products } = useStore();
   const [loading, setLoading] = useState(true);
   const [params] = useSearchParams();
   useEffect(() => {

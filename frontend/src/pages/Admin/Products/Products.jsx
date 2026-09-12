@@ -4,13 +4,13 @@ import ProductModal from '../../../components/Admin/ProductModal/ProductModal.js
 import ProductThumbnail from '../../../components/Admin/ProductThumbnail/ProductThumbnail.jsx';
 import StatusBadge from '../../../components/Admin/StatusBadge/StatusBadge.jsx';
 import EmptyState from '../../../components/Admin/EmptyState/EmptyState.jsx';
-import { mockCategories, mockProducts } from '../../../data/adminMocks.js';
+import { useStore } from '../../../context/StoreContext.jsx';
 import '../../../styles/admin-catalog.css';
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
 function AdminProductsPage() {
-  const [products, setProducts] = useState(mockProducts);
+  const { products, setProducts, categories } = useStore();
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -50,7 +50,7 @@ function AdminProductsPage() {
       price: Number(formValues.price),
       promotionalPrice: formValues.promotionalPrice ? Number(formValues.promotionalPrice) : Number(formValues.price),
       categoryId: formValues.categoryId,
-      categoryName: mockCategories.find((category) => category.id === formValues.categoryId)?.name || 'Sem categoria',
+      categoryName: categories.find((category) => category.id === formValues.categoryId)?.name || 'Sem categoria',
       image: formValues.image || 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=900&q=80',
       stock: 0,
       active: Boolean(formValues.active),
@@ -66,7 +66,7 @@ function AdminProductsPage() {
       ...formValues,
       price: Number(formValues.price),
       promotionalPrice: formValues.promotionalPrice ? Number(formValues.promotionalPrice) : Number(formValues.price),
-      categoryName: mockCategories.find((category) => category.id === formValues.categoryId)?.name || editingProduct.categoryName,
+      categoryName: categories.find((category) => category.id === formValues.categoryId)?.name || editingProduct.categoryName,
       image: formValues.image || editingProduct.image,
       active: Boolean(formValues.active),
       stock: Number(formValues.stock ?? editingProduct.stock),
@@ -96,7 +96,13 @@ function AdminProductsPage() {
       <div className="admin-toolbar">
         <label className="admin-search">
           <Search size={16} aria-hidden="true" />
-          <input type="search" aria-label="Buscar produto" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar produto" />
+          <input
+            type="search"
+            aria-label="Buscar produto"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Buscar produto"
+          />
         </label>
         <button type="button" className="button" onClick={openCreateModal}>
           <Plus size={16} aria-hidden="true" />
@@ -125,7 +131,9 @@ function AdminProductsPage() {
                 <th scope="col">Produto</th>
                 <th scope="col">Categoria</th>
                 <th scope="col">Preço</th>
-                <th scope="col" className="admin-table__stock">Estoque</th>
+                <th scope="col" className="admin-table__stock">
+                  Estoque
+                </th>
                 <th scope="col">Status</th>
                 <th scope="col">Ações</th>
               </tr>
@@ -143,10 +151,14 @@ function AdminProductsPage() {
                     </div>
                   </th>
                   <td>
-                    <span className="admin-table__truncate admin-table__category" title={product.categoryName}>{product.categoryName}</span>
+                    <span className="admin-table__truncate admin-table__category" title={product.categoryName}>
+                      {product.categoryName}
+                    </span>
                   </td>
                   <td className="admin-table__number">
-                    <span className="admin-table__truncate" title={currency.format(Number(product.price))}>{currency.format(Number(product.price))}</span>
+                    <span className="admin-table__truncate" title={currency.format(Number(product.price))}>
+                      {currency.format(Number(product.price))}
+                    </span>
                   </td>
                   <td className="admin-table__stock">
                     <span className={`stock-pill ${product.stock === 0 ? 'stock-pill--empty' : product.stock <= 5 ? 'stock-pill--low' : ''}`}>
@@ -158,10 +170,22 @@ function AdminProductsPage() {
                   </td>
                   <td>
                     <div className="admin-table__actions">
-                      <button type="button" className="admin-table__action" aria-label={`Editar ${product.name}`} title="Editar" onClick={() => openEditModal(product)}>
+                      <button
+                        type="button"
+                        className="admin-table__action"
+                        aria-label={`Editar ${product.name}`}
+                        title="Editar"
+                        onClick={() => openEditModal(product)}
+                      >
                         <Pencil size={16} aria-hidden="true" />
                       </button>
-                      <button type="button" className="admin-table__action" aria-label={`${product.active ? 'Desativar' : 'Ativar'} ${product.name}`} title={product.active ? 'Desativar' : 'Ativar'} onClick={() => handleToggleStatus(product.id)}>
+                      <button
+                        type="button"
+                        className="admin-table__action"
+                        aria-label={`${product.active ? 'Desativar' : 'Ativar'} ${product.name}`}
+                        title={product.active ? 'Desativar' : 'Ativar'}
+                        onClick={() => handleToggleStatus(product.id)}
+                      >
                         <Power size={16} aria-hidden="true" />
                       </button>
                     </div>
@@ -176,7 +200,7 @@ function AdminProductsPage() {
       <ProductModal
         open={isModalOpen}
         mode={editingProduct ? 'edit' : 'create'}
-        categories={mockCategories}
+        categories={categories}
         initialValues={
           editingProduct || {
             name: '',

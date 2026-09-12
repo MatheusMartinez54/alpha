@@ -4,13 +4,14 @@ import { useCart } from '../../context/CartContext.jsx';
 
 function ProductCard({ product }) {
   const { addItem } = useCart();
+  const shortName = product.short || product.name.slice(0, 8).toUpperCase();
   return (
     <article className="product-card">
       <Link to={`/produto/${product.id}`}>
         <div className="product-art" style={{ background: product.color, backgroundImage: `url(${product.image})` }}>
           <span>{product.tag}</span>
           {product.stock === 0 && <small className="stock-badge">Sem estoque</small>}
-          <strong>{product.short}</strong>
+          <strong>{shortName}</strong>
         </div>
       </Link>
       <div className="product-info">
