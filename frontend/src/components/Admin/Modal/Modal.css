@@ -1,0 +1,352 @@
+.admin-modal {
+  width: 640px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  color-scheme: dark;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+}
+
+.admin-modal[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-modal--compact {
+  width: 500px;
+}
+
+.admin-modal::backdrop {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.admin-modal__header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-modal__header h3 {
+  min-width: 0;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.admin-modal__close {
+  display: inline-flex;
+  flex: 0 0 34px;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+.admin-modal__close:hover {
+  color: var(--text);
+  background: #2b2b2b;
+}
+
+.admin-modal__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  margin: 0;
+}
+
+.admin-modal__body {
+  min-height: 0;
+  padding: 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: #494949 var(--surface);
+  scrollbar-width: thin;
+}
+
+.admin-modal__form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.admin-modal__field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 8px;
+}
+
+.admin-modal__field--full {
+  grid-column: 1 / -1;
+}
+
+.admin-modal__field > label {
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.admin-modal__field input:not([type='checkbox']),
+.admin-modal__field select,
+.admin-modal__field textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-modal__field select {
+  cursor: pointer;
+}
+
+.admin-modal__field option {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.admin-modal__field textarea {
+  min-height: 94px;
+  resize: vertical;
+}
+
+.admin-modal__field input::placeholder,
+.admin-modal__field textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.admin-modal__field input:not([type='checkbox']):focus,
+.admin-modal__field select:focus,
+.admin-modal__field textarea:focus {
+  outline: none;
+  border-color: rgba(245, 196, 0, 0.7);
+  box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.1);
+}
+
+.admin-modal__image-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.admin-modal__image-copy {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.admin-modal__image-copy strong {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.admin-modal__image-copy span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.admin-modal .admin-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.admin-modal .admin-checkbox input {
+  flex: 0 0 17px;
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.admin-modal__stock {
+  display: grid;
+  gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.admin-modal__stock h4,
+.admin-modal .admin-category-products__assign h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admin-modal__stock-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.admin-modal__field--grow {
+  flex: 1;
+}
+
+.admin-modal__actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 18px 24px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.admin-modal .button {
+  min-height: 42px;
+  padding: 10px 16px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.admin-modal .button.secondary {
+  border: 1px solid var(--line);
+}
+
+.admin-modal .button:not(:disabled):hover {
+  filter: brightness(1.08);
+}
+
+.admin-modal .button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.admin-modal button:focus-visible,
+.admin-modal input[type='checkbox']:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.admin-modal .admin-category-products,
+.admin-modal .admin-category-products__assign,
+.admin-modal .admin-category-checkboxes {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.admin-modal .admin-category-products__item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-modal .admin-category-products__item:last-child {
+  border-bottom: 0;
+}
+
+.admin-modal .admin-category-products__copy {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+}
+
+.admin-modal .admin-category-products__copy strong {
+  overflow: hidden;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.admin-modal .admin-category-products__copy span,
+.admin-modal .admin-empty-copy {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.admin-modal .admin-empty-copy {
+  margin: 0;
+}
+
+.admin-modal .admin-category-products__assign {
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.admin-modal .admin-category-checkboxes {
+  gap: 8px;
+}
+
+.admin-modal .admin-checkbox--row {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.admin-modal .admin-checkbox--row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 520px) {
+  .admin-modal__header,
+  .admin-modal__actions {
+    padding: 16px;
+  }
+
+  .admin-modal__body {
+    padding: 20px 16px;
+  }
+
+  .admin-modal__form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .admin-modal__stock-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-modal__actions .button {
+    flex: 1;
+    padding-inline: 12px;
+  }
+}

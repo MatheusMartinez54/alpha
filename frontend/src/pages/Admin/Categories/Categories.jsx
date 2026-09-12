@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
-import { Plus, Search, Eye } from 'lucide-react';
+import { Eye, Pencil, Plus, Power, Search } from 'lucide-react';
 import CategoryModal from '../../../components/Admin/CategoryModal/CategoryModal.jsx';
 import CategoryProductsModal from '../../../components/Admin/CategoryProductsModal/CategoryProductsModal.jsx';
 import StatusBadge from '../../../components/Admin/StatusBadge/StatusBadge.jsx';
 import EmptyState from '../../../components/Admin/EmptyState/EmptyState.jsx';
 import { mockCategories, mockProducts } from '../../../data/adminMocks.js';
+import '../../../styles/admin-catalog.css';
 
 function CategoriesPage() {
   const [categories, setCategories] = useState(mockCategories);
@@ -80,37 +81,43 @@ function CategoriesPage() {
   };
 
   return (
-    <div className="admin-page-content">
+    <div className="admin-page-content admin-catalog">
       <div className="admin-page-header">
         <div>
           <h1>Categorias</h1>
           <p>Organize os produtos da sua loja</p>
         </div>
-
-        <button type="button" className="button" onClick={openCreateModal}>
-          <Plus size={16} />
-          Nova categoria
-        </button>
       </div>
 
       <div className="admin-toolbar">
         <label className="admin-search">
-          <Search size={16} />
-          <input type="text" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar categoria" />
+          <Search size={16} aria-hidden="true" />
+          <input type="search" aria-label="Buscar categoria" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar categoria" />
         </label>
+        <button type="button" className="button" onClick={openCreateModal}>
+          <Plus size={16} aria-hidden="true" />
+          Nova categoria
+        </button>
       </div>
 
       {filteredCategories.length === 0 ? (
         <EmptyState title="Nenhuma categoria encontrada." description="Tente outra busca ou cadastre uma nova categoria." />
       ) : (
-        <div className="admin-table-wrapper">
-          <table className="admin-table">
+        <div className="admin-table-wrapper" role="region" aria-label="Listagem de categorias" tabIndex={0}>
+          <table className="admin-table admin-table--categories">
+            <caption className="admin-catalog__sr-only">Categorias da loja</caption>
+            <colgroup>
+              <col />
+              <col className="admin-table__col-count" />
+              <col className="admin-table__col-status" />
+              <col className="admin-table__col-actions" />
+            </colgroup>
             <thead>
               <tr>
-                <th>Categoria</th>
-                <th>Produtos</th>
-                <th>Status</th>
-                <th>Ações</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Produtos</th>
+                <th scope="col">Status</th>
+                <th scope="col">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -119,28 +126,29 @@ function CategoriesPage() {
 
                 return (
                   <tr key={category.id}>
-                    <td>
-                      <strong>{category.name}</strong>
-                    </td>
-                    <td>{categoryProducts.length} produtos</td>
+                    <th scope="row">
+                      <strong className="admin-table__truncate" title={category.name}>{category.name}</strong>
+                    </th>
+                    <td><span className="admin-table__count">{categoryProducts.length} {categoryProducts.length === 1 ? 'produto' : 'produtos'}</span></td>
                     <td>
                       <StatusBadge active={category.active} />
                     </td>
                     <td>
                       <div className="admin-table__actions">
-                        <button type="button" className="admin-table__action admin-table__action--secondary" onClick={() => openEditModal(category)}>
-                          Editar
+                        <button type="button" className="admin-table__action" aria-label={`Editar ${category.name}`} title="Editar" onClick={() => openEditModal(category)}>
+                          <Pencil size={16} aria-hidden="true" />
                         </button>
-                        <button type="button" className="admin-table__action admin-table__action--ghost" onClick={() => openProductsModal(category)}>
-                          <Eye size={14} />
-                          Ver produtos
+                        <button type="button" className="admin-table__action" aria-label={`Ver produtos de ${category.name}`} title="Ver produtos" onClick={() => openProductsModal(category)}>
+                          <Eye size={16} aria-hidden="true" />
                         </button>
                         <button
                           type="button"
-                          className="admin-table__action admin-table__action--ghost"
+                          className="admin-table__action"
+                          aria-label={`${category.active ? 'Desativar' : 'Ativar'} ${category.name}`}
+                          title={category.active ? 'Desativar' : 'Ativar'}
                           onClick={() => handleToggleCategory(category.id)}
                         >
-                          {category.active ? 'Desativar' : 'Ativar'}
+                          <Power size={16} aria-hidden="true" />
                         </button>
                       </div>
                     </td>
