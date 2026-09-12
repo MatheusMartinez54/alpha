@@ -1,5 +1,6 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { ArrowLeft, LayoutDashboard, LogOut, Package, Settings, ShoppingCart, Tags } from 'lucide-react';
+import { ArrowLeft, LayoutDashboard, LogOut, Package, Settings, ShoppingCart, Tags, X } from 'lucide-react';
+import Logo from '../../Logo/Logo.jsx';
 
 const menuItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -8,7 +9,7 @@ const menuItems = [
   { to: '/admin/categorias', label: 'Categorias', icon: Tags },
 ];
 
-function AdminSidebar({ isOpen, onClose }) {
+function AdminSidebar({ isOpen, onClose, ref }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -17,10 +18,10 @@ function AdminSidebar({ isOpen, onClose }) {
   };
 
   return (
-    <aside className={`admin-sidebar ${isOpen ? 'is-open' : ''}`}>
+    <aside ref={ref} id="admin-navigation" aria-label="Navegação administrativa" className={`admin-sidebar ${isOpen ? 'is-open' : ''}`}>
       <div className="admin-sidebar__brand">
-        <div className="admin-sidebar__logo">ALPHA</div>
-        <p>Painel Administrativo</p>
+        <Link to="/" onClick={onClose} aria-label="Alpha Imports — voltar à loja"><Logo className="admin-sidebar__logo" /></Link>
+        <button type="button" className="admin-sidebar__close" aria-label="Fechar menu administrativo" onClick={onClose}><X size={20} aria-hidden="true" /></button>
       </div>
 
       <nav className="admin-sidebar__nav" aria-label="Menu administrativo">

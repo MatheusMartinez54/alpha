@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Pencil, Plus, Power, Search } from 'lucide-react';
+import AdminRecord, { AdminRecordAction } from '../../../components/Admin/AdminRecord/AdminRecord.jsx';
 import ProductModal from '../../../components/Admin/ProductModal/ProductModal.jsx';
 import ProductThumbnail from '../../../components/Admin/ProductThumbnail/ProductThumbnail.jsx';
 import StatusBadge from '../../../components/Admin/StatusBadge/StatusBadge.jsx';
@@ -113,88 +114,24 @@ function AdminProductsPage() {
       {filteredProducts.length === 0 ? (
         <EmptyState title="Nenhum produto encontrado." description="Tente outro termo de busca ou cadastre um novo produto." />
       ) : (
-        <div className="admin-table-wrapper" role="region" aria-label="Listagem de produtos" tabIndex={0}>
-          <table className="admin-table admin-table--products">
-            <caption className="admin-catalog__sr-only">Produtos da loja</caption>
-            <colgroup>
-              <col className="admin-table__col-image" />
-              <col />
-              <col className="admin-table__col-category" />
-              <col className="admin-table__col-price" />
-              <col className="admin-table__col-stock" />
-              <col className="admin-table__col-status" />
-              <col className="admin-table__col-actions" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th scope="col">Imagem</th>
-                <th scope="col">Produto</th>
-                <th scope="col">Categoria</th>
-                <th scope="col">Preço</th>
-                <th scope="col" className="admin-table__stock">
-                  Estoque
-                </th>
-                <th scope="col">Status</th>
-                <th scope="col">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProducts.map((product) => (
-                <tr key={product.id}>
-                  <td>
-                    <ProductThumbnail src={product.image} alt={product.name} />
-                  </td>
-                  <th scope="row">
-                    <div className="admin-table__product">
-                      <strong title={product.name}>{product.name}</strong>
-                      {product.description && <small title={product.description}>{product.description}</small>}
-                    </div>
-                  </th>
-                  <td>
-                    <span className="admin-table__truncate admin-table__category" title={product.categoryName}>
-                      {product.categoryName}
-                    </span>
-                  </td>
-                  <td className="admin-table__number">
-                    <span className="admin-table__truncate" title={currency.format(Number(product.price))}>
-                      {currency.format(Number(product.price))}
-                    </span>
-                  </td>
-                  <td className="admin-table__stock">
-                    <span className={`stock-pill ${product.stock === 0 ? 'stock-pill--empty' : product.stock <= 5 ? 'stock-pill--low' : ''}`}>
-                      {product.stock} un.
-                    </span>
-                  </td>
-                  <td>
-                    <StatusBadge active={product.active} />
-                  </td>
-                  <td>
-                    <div className="admin-table__actions">
-                      <button
-                        type="button"
-                        className="admin-table__action"
-                        aria-label={`Editar ${product.name}`}
-                        title="Editar"
-                        onClick={() => openEditModal(product)}
-                      >
-                        <Pencil size={16} aria-hidden="true" />
-                      </button>
-                      <button
-                        type="button"
-                        className="admin-table__action"
-                        aria-label={`${product.active ? 'Desativar' : 'Ativar'} ${product.name}`}
-                        title={product.active ? 'Desativar' : 'Ativar'}
-                        onClick={() => handleToggleStatus(product.id)}
-                      >
-                        <Power size={16} aria-hidden="true" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ul className="admin-record-list" aria-label="Listagem de produtos">
+          {filteredProducts.map((product) => (
+            <AdminRecord key={product.id}
+              image={<ProductThumbnail src={product.image} alt={product.name} />}
+              title={product.name} description={product.description}
+              details={<>
+                <span className="admin-record__category">{product.categoryName}</span>
+                <span className="admin-record__price">{currency.format(Number(product.price))}</span>
+                <span className={`stock-pill ${product.stock === 0 ? 'stock-pill--empty' : product.stock <= 5 ? 'stock-pill--low' : ''}`}>{product.stock} un.</span>
+                <StatusBadge active={product.active} />
+              </>}
+              actions={<>
+                <AdminRecordAction label={`Editar ${product.name}`} onClick={() => openEditModal(product)}><Pencil size={18} aria-hidden="true" /></AdminRecordAction>
+                <AdminRecordAction label={`${product.active ? 'Desativar' : 'Ativar'} ${product.name}`} onClick={() => handleToggleStatus(product.id)}><Power size={18} aria-hidden="true" /></AdminRecordAction>
+              </>}
+            />
+          ))}
+        </ul>
       )}
 
       <ProductModal

@@ -1,15 +1,15 @@
 import { Menu } from 'lucide-react';
 
-function AdminHeader({ title, subtitle, onToggleSidebar }) {
+function AdminHeader({ title, subtitle, onToggleSidebar, toggleRef, isSidebarOpen }) {
   return (
     <header className="admin-header">
       <div className="admin-header__left">
-        <button type="button" className="admin-mobile-toggle" aria-label="Abrir menu administrativo" onClick={onToggleSidebar}>
-          <Menu size={20} />
+        <button ref={toggleRef} type="button" className="admin-mobile-toggle" aria-label="Abrir menu administrativo" aria-expanded={isSidebarOpen} aria-controls="admin-navigation" onClick={onToggleSidebar}>
+          <Menu size={20} aria-hidden="true" />
         </button>
         <div>
           <span className="admin-header__eyebrow">ALPHA</span>
-          <h2>{title}</h2>
+          <strong className="admin-header__title">{title}</strong>
         </div>
       </div>
 

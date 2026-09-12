@@ -1,16 +1,26 @@
 :root {
   font-family: 'DM Sans', 'Segoe UI', sans-serif;
-  color: #fff;
-  background: #0f0f0f;
+  font-size: 16px;
+  color-scheme: dark;
   font-synthesis: none;
-  --bg: #0f0f0f;
-  --surface: #171717;
-  --surface-2: #202020;
-  --text: #fff;
-  --muted: #a5a5a5;
-  --accent: #f5c400;
-  --accent-ink: #161000;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --bg: #111210;
+  --surface: #1a1b18;
+  --surface-2: #23241f;
+  --text: #f4f3ed;
+  --muted: #a2a39b;
+  --accent: #d7b76d;
+  --accent-ink: #19170f;
   --line: rgba(255, 255, 255, 0.1);
-  --radius: 14px;
-  --max-width: 1180px;
+  --radius: 10px;
+  --max-width: 1200px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
 }

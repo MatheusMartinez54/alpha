@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Trash2 } from 'lucide-react';
 import { useCart } from '../../context/CartContext.jsx';
+import ProductImage from '../../components/ProductImage/ProductImage.jsx';
 function Cart() {
   const { items, total, removeItem } = useCart();
   return (
     <main className="main container">
-      <span className="eyebrow">Sua seleção</span>
-      <h1>Carrinho</h1>
+      <div className="commerce-heading"><span className="eyebrow">Sua seleção</span><h1>Carrinho</h1></div>
       {items.length === 0 ? (
         <div className="empty">
           <p>Seu carrinho está esperando por uma boa escolha.</p>
@@ -19,9 +19,7 @@ function Cart() {
           <div>
             {items.map((item) => (
               <div className="cart-item" key={item.id}>
-                <div className="cart-swatch" style={{ background: item.color }}>
-                  {item.short}
-                </div>
+                <ProductImage product={item} />
                 <div>
                   <h3>{item.name}</h3>
                   <p>{item.quantity} unidade(s)</p>

@@ -1,4 +1,5 @@
 import ProductCard from '../../components/ProductCard/ProductCard.jsx';
+import CategoryMenu from '../../components/CategoryMenu/CategoryMenu.jsx';
 import { useStore } from '../../context/StoreContext.jsx';
 import Loading from '../../components/Loading/Loading.jsx';
 import { Search } from 'lucide-react';
@@ -21,9 +22,12 @@ function Products() {
       (!category || category === 'novidades' || product.categoryId === category),
   );
   return (
-    <main className="main container">
-      <span className="eyebrow">Catálogo completo</span>
-      <h1>{query ? `Busca: ${params.get('busca')}` : 'Produtos'}</h1>
+    <main className="main container catalog-page">
+      <div className="commerce-heading">
+        <span className="eyebrow">Catálogo completo</span>
+        <h1>{query ? `Busca: ${params.get('busca')}` : 'Produtos'}</h1>
+      </div>
+      <CategoryMenu />
       {loading && <Loading />}
       {!loading && (
         <>
@@ -31,9 +35,9 @@ function Products() {
             <span>{filteredProducts.length} produtos encontrados</span>
             <Search size={17} />
           </div>
-          <div className="product-grid all-products">
+          <div className="product-list">
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} variant="list" />
             ))}
           </div>
           {filteredProducts.length === 0 && (

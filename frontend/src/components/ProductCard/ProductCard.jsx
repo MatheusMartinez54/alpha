@@ -1,35 +1,26 @@
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { useCart } from '../../context/CartContext.jsx';
+import ProductImage from '../ProductImage/ProductImage.jsx';
 
-function ProductCard({ product }) {
+function ProductCard({ product, variant = 'card' }) {
   const { addItem } = useCart();
-  const shortName = product.short || product.name.slice(0, 8).toUpperCase();
   return (
-    <article className="product-card">
-      <Link to={`/produto/${product.id}`}>
-        <div className="product-art" style={{ background: product.color, backgroundImage: `url(${product.image})` }}>
-          <span>{product.tag}</span>
-          {product.stock === 0 && <small className="stock-badge">Sem estoque</small>}
-          <strong>{shortName}</strong>
-        </div>
-      </Link>
+    <article className={`product-card${variant === 'list' ? ' product-card--list' : ''}`}>
+      <Link className="product-card__image-link" to={`/produto/${product.id}`}><ProductImage product={product} /></Link>
       <div className="product-info">
-        <div>
-          <small>{product.categoryName}</small>
-          <h3>{product.name}</h3>
+        <div className="product-info__copy">
+          <small className="product-category">{product.categoryName}</small>
+          <h3><Link to={`/produto/${product.id}`}>{product.name}</Link></h3>
           <div className="prices">
             <b>R$ {product.promotionalPrice.toFixed(2).replace('.', ',')}</b>
             {product.promotionalPrice < product.price && <del>R$ {product.price.toFixed(2).replace('.', ',')}</del>}
           </div>
+          {product.stock === 0 && <small className="stock-badge">Sem estoque</small>}
         </div>
-        <button
-          className="add-button"
-          disabled={product.stock === 0}
-          aria-label={product.stock === 0 ? `${product.name} sem estoque` : `Adicionar ${product.name}`}
-          onClick={() => addItem(product)}
-        >
-          <Plus size={20} />
+        <button type="button" className="add-button" disabled={product.stock === 0}
+          aria-label={product.stock === 0 ? `${product.name} sem estoque` : `Adicionar ${product.name}`} onClick={() => addItem(product)}>
+          <Plus size={20} aria-hidden="true" />
         </button>
       </div>
     </article>

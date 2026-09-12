@@ -1,8 +1,8 @@
 .admin-modal {
-  width: 640px;
-  max-width: calc(100vw - 32px);
-  max-height: calc(100vh - 32px);
-  max-height: calc(100dvh - 32px);
+  width: min(600px, calc(100% - 32px));
+  max-width: calc(100% - 32px);
+  max-height: min(85vh, calc(100vh - 32px));
+  max-height: min(85dvh, calc(100dvh - 32px));
   margin: auto;
   padding: 0;
   overflow: hidden;
@@ -20,7 +20,7 @@
 }
 
 .admin-modal--compact {
-  width: 500px;
+  width: min(500px, calc(100% - 32px));
 }
 
 .admin-modal::backdrop {
@@ -47,11 +47,11 @@
 
 .admin-modal__close {
   display: inline-flex;
-  flex: 0 0 34px;
+  flex: 0 0 44px;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -101,7 +101,7 @@
 
 .admin-modal__field > label {
   color: var(--text);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.4;
 }
@@ -111,7 +111,7 @@
 .admin-modal__field textarea {
   width: 100%;
   min-width: 0;
-  min-height: 42px;
+  min-height: 44px;
   margin: 0;
   padding: 10px 12px;
   border: 1px solid var(--line);
@@ -119,7 +119,7 @@
   background: var(--bg);
   color: var(--text);
   font: inherit;
-  font-size: 0.85rem;
+  font-size: 1rem;
   line-height: 1.4;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -147,9 +147,9 @@
 .admin-modal__field input:not([type='checkbox']):focus,
 .admin-modal__field select:focus,
 .admin-modal__field textarea:focus {
-  outline: none;
-  border-color: rgba(245, 196, 0, 0.7);
-  box-shadow: 0 0 0 3px rgba(245, 196, 0, 0.1);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
 }
 
 .admin-modal__image-box {
@@ -157,7 +157,7 @@
   align-items: center;
   gap: 14px;
   padding: 12px;
-  border: 1px dashed var(--line);
+  border: 1px solid var(--line);
   border-radius: 10px;
   background: var(--bg);
 }
@@ -169,7 +169,7 @@
 }
 
 .admin-modal__image-copy strong {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
@@ -183,8 +183,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-height: 44px;
   color: var(--text);
-  font-size: 0.85rem;
+  font-size: 1rem;
   cursor: pointer;
 }
 
@@ -234,9 +235,9 @@
 }
 
 .admin-modal .button {
-  min-height: 42px;
+  min-height: 44px;
   padding: 10px 16px;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   line-height: 1.4;
 }
 
@@ -288,16 +289,15 @@
 
 .admin-modal .admin-category-products__copy strong {
   overflow: hidden;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 500;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 .admin-modal .admin-category-products__copy span,
 .admin-modal .admin-empty-copy {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
 }
 
 .admin-modal .admin-empty-copy {
@@ -325,7 +325,7 @@
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 639px) {
   .admin-modal__header,
   .admin-modal__actions {
     padding: 16px;

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Eye, Pencil, Plus, Power, Search } from 'lucide-react';
+import { Eye, Pencil, Plus, Power, Search, Tags } from 'lucide-react';
+import AdminRecord, { AdminRecordAction } from '../../../components/Admin/AdminRecord/AdminRecord.jsx';
 import CategoryModal from '../../../components/Admin/CategoryModal/CategoryModal.jsx';
 import CategoryProductsModal from '../../../components/Admin/CategoryProductsModal/CategoryProductsModal.jsx';
 import StatusBadge from '../../../components/Admin/StatusBadge/StatusBadge.jsx';
@@ -108,79 +109,25 @@ function CategoriesPage() {
       {filteredCategories.length === 0 ? (
         <EmptyState title="Nenhuma categoria encontrada." description="Tente outra busca ou cadastre uma nova categoria." />
       ) : (
-        <div className="admin-table-wrapper" role="region" aria-label="Listagem de categorias" tabIndex={0}>
-          <table className="admin-table admin-table--categories">
-            <caption className="admin-catalog__sr-only">Categorias da loja</caption>
-            <colgroup>
-              <col />
-              <col className="admin-table__col-count" />
-              <col className="admin-table__col-status" />
-              <col className="admin-table__col-actions" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th scope="col">Categoria</th>
-                <th scope="col">Produtos</th>
-                <th scope="col">Status</th>
-                <th scope="col">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCategories.map((category) => {
-                const categoryProducts = getCategoryProducts(category.id);
-
-                return (
-                  <tr key={category.id}>
-                    <th scope="row">
-                      <strong className="admin-table__truncate" title={category.name}>
-                        {category.name}
-                      </strong>
-                    </th>
-                    <td>
-                      <span className="admin-table__count">
-                        {categoryProducts.length} {categoryProducts.length === 1 ? 'produto' : 'produtos'}
-                      </span>
-                    </td>
-                    <td>
-                      <StatusBadge active={category.active} />
-                    </td>
-                    <td>
-                      <div className="admin-table__actions">
-                        <button
-                          type="button"
-                          className="admin-table__action"
-                          aria-label={`Editar ${category.name}`}
-                          title="Editar"
-                          onClick={() => openEditModal(category)}
-                        >
-                          <Pencil size={16} aria-hidden="true" />
-                        </button>
-                        <button
-                          type="button"
-                          className="admin-table__action"
-                          aria-label={`Ver produtos de ${category.name}`}
-                          title="Ver produtos"
-                          onClick={() => openProductsModal(category)}
-                        >
-                          <Eye size={16} aria-hidden="true" />
-                        </button>
-                        <button
-                          type="button"
-                          className="admin-table__action"
-                          aria-label={`${category.active ? 'Desativar' : 'Ativar'} ${category.name}`}
-                          title={category.active ? 'Desativar' : 'Ativar'}
-                          onClick={() => handleToggleCategory(category.id)}
-                        >
-                          <Power size={16} aria-hidden="true" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <ul className="admin-record-list" aria-label="Listagem de categorias">
+          {filteredCategories.map((category) => {
+            const categoryProducts = getCategoryProducts(category.id);
+            return (
+              <AdminRecord key={category.id} title={category.name}
+                image={<span className="admin-record__category-icon"><Tags size={22} aria-hidden="true" /></span>}
+                details={<>
+                  <span className="admin-record__category">{categoryProducts.length} {categoryProducts.length === 1 ? 'produto' : 'produtos'}</span>
+                  <StatusBadge active={category.active} />
+                </>}
+                actions={<>
+                  <AdminRecordAction label={`Editar ${category.name}`} onClick={() => openEditModal(category)}><Pencil size={18} aria-hidden="true" /></AdminRecordAction>
+                  <AdminRecordAction label={`Ver produtos de ${category.name}`} onClick={() => openProductsModal(category)}><Eye size={18} aria-hidden="true" /></AdminRecordAction>
+                  <AdminRecordAction label={`${category.active ? 'Desativar' : 'Ativar'} ${category.name}`} onClick={() => handleToggleCategory(category.id)}><Power size={18} aria-hidden="true" /></AdminRecordAction>
+                </>}
+              />
+            );
+          })}
+        </ul>
       )}
 
       <CategoryModal

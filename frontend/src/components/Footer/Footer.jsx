@@ -2,9 +2,9 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="container">
-        <strong>ALPHA</strong>
-        <span>Uma experiência digital feita para escolhas com intenção.</span>
-        <small>© 2026 ALPHA</small>
+        <strong>ALPHA IMPORTS</strong>
+        <span>Escolhas com intenção.</span>
+        <small>© 2026 Alpha Imports</small>
       </div>
     </footer>
   );
