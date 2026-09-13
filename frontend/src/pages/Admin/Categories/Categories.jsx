@@ -6,6 +6,7 @@ import CategoryProductsModal from '../../../components/Admin/CategoryProductsMod
 import StatusBadge from '../../../components/Admin/StatusBadge/StatusBadge.jsx';
 import EmptyState from '../../../components/Admin/EmptyState/EmptyState.jsx';
 import { useStore } from '../../../context/StoreContext.jsx';
+import { normalizeSearch } from '../../../utils/format.js';
 import '../../../styles/admin-catalog.css';
 
 function CategoriesPage() {
@@ -17,10 +18,10 @@ function CategoriesPage() {
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const filteredCategories = useMemo(() => {
-    const term = search.trim().toLowerCase();
+    const term = normalizeSearch(search);
     if (!term) return categories;
 
-    return categories.filter((category) => category.name.toLowerCase().includes(term));
+    return categories.filter((category) => normalizeSearch(category.name).includes(term));
   }, [categories, search]);
 
   const openCreateModal = () => {
@@ -61,7 +62,9 @@ function CategoriesPage() {
   };
 
   const handleToggleCategory = (categoryId) => {
-    setCategories((current) => current.map((category) => (category.id === categoryId ? { ...category, active: !category.active } : category)));
+    setCategories((current) =>
+      current.map((category) => (category.id === categoryId ? { ...category, active: !category.active } : category)),
+    );
   };
 
   const getCategoryProducts = (categoryId) => products.filter((product) => product.categoryId === categoryId);
@@ -113,17 +116,38 @@ function CategoriesPage() {
           {filteredCategories.map((category) => {
             const categoryProducts = getCategoryProducts(category.id);
             return (
-              <AdminRecord key={category.id} title={category.name}
-                image={<span className="admin-record__category-icon"><Tags size={22} aria-hidden="true" /></span>}
-                details={<>
-                  <span className="admin-record__category">{categoryProducts.length} {categoryProducts.length === 1 ? 'produto' : 'produtos'}</span>
-                  <StatusBadge active={category.active} />
-                </>}
-                actions={<>
-                  <AdminRecordAction label={`Editar ${category.name}`} onClick={() => openEditModal(category)}><Pencil size={18} aria-hidden="true" /></AdminRecordAction>
-                  <AdminRecordAction label={`Ver produtos de ${category.name}`} onClick={() => openProductsModal(category)}><Eye size={18} aria-hidden="true" /></AdminRecordAction>
-                  <AdminRecordAction label={`${category.active ? 'Desativar' : 'Ativar'} ${category.name}`} onClick={() => handleToggleCategory(category.id)}><Power size={18} aria-hidden="true" /></AdminRecordAction>
-                </>}
+              <AdminRecord
+                key={category.id}
+                title={category.name}
+                image={
+                  <span className="admin-record__category-icon">
+                    <Tags size={22} aria-hidden="true" />
+                  </span>
+                }
+                details={
+                  <>
+                    <span className="admin-record__category">
+                      {categoryProducts.length} {categoryProducts.length === 1 ? 'produto' : 'produtos'}
+                    </span>
+                    <StatusBadge active={category.active} />
+                  </>
+                }
+                actions={
+                  <>
+                    <AdminRecordAction label={`Editar ${category.name}`} onClick={() => openEditModal(category)}>
+                      <Pencil size={18} aria-hidden="true" />
+                    </AdminRecordAction>
+                    <AdminRecordAction label={`Ver produtos de ${category.name}`} onClick={() => openProductsModal(category)}>
+                      <Eye size={18} aria-hidden="true" />
+                    </AdminRecordAction>
+                    <AdminRecordAction
+                      label={`${category.active ? 'Desativar' : 'Ativar'} ${category.name}`}
+                      onClick={() => handleToggleCategory(category.id)}
+                    >
+                      <Power size={18} aria-hidden="true" />
+                    </AdminRecordAction>
+                  </>
+                }
               />
             );
           })}
@@ -142,7 +166,7 @@ function CategoriesPage() {
         open={isProductsModalOpen}
         category={selectedCategory}
         products={selectedCategory ? getCategoryProducts(selectedCategory.id) : []}
-        availableProducts={products.filter((product) => !product.categoryId || product.categoryId === selectedCategory?.id)}
+        availableProducts={products.filter((product) => !product.categoryId)}
         onClose={() => setIsProductsModalOpen(false)}
         onAddProducts={handleAddProductsToCategory}
       />

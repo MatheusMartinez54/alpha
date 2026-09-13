@@ -14,7 +14,7 @@ function ProductThumbnail({ src, alt = '' }) {
       aria-label={hasImage ? undefined : `${alt || 'Produto'}: imagem indisponível`}
     >
       {hasImage ? (
-        <img src={source} alt={alt} width={56} height={56} onError={() => setFailedSource(source)} />
+        <img src={source} alt={alt} width={56} height={56} loading="lazy" decoding="async" onError={() => setFailedSource(source)} />
       ) : (
         <ImageOff size={20} strokeWidth={1.5} aria-hidden="true" />
       )}

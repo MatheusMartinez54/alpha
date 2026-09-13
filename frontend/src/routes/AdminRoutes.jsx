@@ -4,17 +4,10 @@ import Dashboard from '../pages/Admin/Dashboard/Dashboard.jsx';
 import ProductsPage from '../pages/Admin/Products/Products.jsx';
 import CategoriesPage from '../pages/Admin/Categories/Categories.jsx';
 import OrdersPage from '../pages/Admin/Orders/Orders.jsx';
+import EmptyState from '../components/Admin/EmptyState/EmptyState.jsx';
 
 function AdminPage({ title, description }) {
-  return (
-    <div className="admin-empty-state">
-      <div className="admin-empty-state__content">
-        <span className="eyebrow">Painel ALPHA</span>
-        <h2>{title}</h2>
-        <p>{description}</p>
-      </div>
-    </div>
-  );
+  return <EmptyState title={title} description={description} />;
 }
 
 function AdminRoutes() {

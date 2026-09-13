@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import Modal from '../Modal/Modal.jsx';
 import ProductThumbnail from '../ProductThumbnail/ProductThumbnail.jsx';
 
@@ -15,10 +15,13 @@ const defaultValues = {
 
 function ProductForm({ mode, categories, initialValues, onClose, onSubmit, onStockUpdate }) {
   const [form, setForm] = useState(initialValues || defaultValues);
+  const [stockFeedback, setStockFeedback] = useState(null);
+  const stockRef = useRef(null);
   const fieldId = useId();
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
+    if (name === 'stock') setStockFeedback(null);
     setForm((current) => ({
       ...current,
       [name]: type === 'checkbox' ? checked : value,
@@ -31,8 +34,15 @@ function ProductForm({ mode, categories, initialValues, onClose, onSubmit, onSto
   };
 
   const handleStockUpdate = () => {
+    const stock = Number(form.stock);
+    if (form.stock === '' || !Number.isInteger(stock) || stock < 0) {
+      setStockFeedback({ error: true, message: 'Informe uma quantidade inteira igual ou maior que zero.' });
+      stockRef.current?.focus();
+      return;
+    }
     if (onStockUpdate) {
-      onStockUpdate(Number(form.stock));
+      onStockUpdate(stock);
+      setStockFeedback({ error: false, message: `Estoque atualizado: ${stock} ${stock === 1 ? 'unidade' : 'unidades'}.` });
     }
   };
 
@@ -62,12 +72,26 @@ function ProductForm({ mode, categories, initialValues, onClose, onSubmit, onSto
               <span>Informe o endereço da imagem no campo abaixo.</span>
             </div>
           </div>
-          <input id={`${fieldId}-image`} type="url" name="image" value={form.image || ''} onChange={handleChange} placeholder="https://exemplo.com/imagem.jpg" />
+          <input
+            id={`${fieldId}-image`}
+            type="url"
+            name="image"
+            value={form.image || ''}
+            onChange={handleChange}
+            placeholder="https://exemplo.com/imagem.jpg"
+          />
         </div>
 
         <div className="admin-modal__field">
           <label htmlFor={`${fieldId}-name`}>Nome</label>
-          <input id={`${fieldId}-name`} name="name" value={form.name || ''} onChange={handleChange} placeholder="Digite o nome do produto" required />
+          <input
+            id={`${fieldId}-name`}
+            name="name"
+            value={form.name || ''}
+            onChange={handleChange}
+            placeholder="Digite o nome do produto"
+            required
+          />
         </div>
 
         <div className="admin-modal__field">
@@ -103,7 +127,7 @@ function ProductForm({ mode, categories, initialValues, onClose, onSubmit, onSto
             type="number"
             min="0"
             step="0.01"
-            value={form.price || ''}
+            value={form.price ?? ''}
             onChange={handleChange}
             placeholder="R$ 0,00"
             required
@@ -118,7 +142,7 @@ function ProductForm({ mode, categories, initialValues, onClose, onSubmit, onSto
             type="number"
             min="0"
             step="0.01"
-            value={form.promotionalPrice || ''}
+            value={form.promotionalPrice ?? ''}
             onChange={handleChange}
             placeholder="R$ 0,00"
           />
@@ -140,12 +164,32 @@ function ProductForm({ mode, categories, initialValues, onClose, onSubmit, onSto
             <div className="admin-modal__stock-row">
               <div className="admin-modal__field admin-modal__field--grow">
                 <label htmlFor={`${fieldId}-stock`}>Quantidade atual</label>
-                <input id={`${fieldId}-stock`} name="stock" type="number" min="0" value={form.stock ?? 0} onChange={handleChange} />
+                <input
+                  ref={stockRef}
+                  id={`${fieldId}-stock`}
+                  name="stock"
+                  type="number"
+                  min="0"
+                  step="1"
+                  inputMode="numeric"
+                  required
+                  value={form.stock ?? 0}
+                  onChange={handleChange}
+                  aria-invalid={stockFeedback?.error || undefined}
+                  aria-describedby={stockFeedback ? `${fieldId}-stock-feedback` : undefined}
+                />
               </div>
               <button type="button" className="button secondary" onClick={handleStockUpdate}>
                 Atualizar estoque
               </button>
             </div>
+            <p
+              id={`${fieldId}-stock-feedback`}
+              className={`admin-stock-feedback${stockFeedback?.error ? ' admin-stock-feedback--error' : ''}`}
+              role="status"
+            >
+              {stockFeedback?.message}
+            </p>
           </div>
         )}
       </div>

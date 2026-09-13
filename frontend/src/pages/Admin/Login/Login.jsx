@@ -9,7 +9,7 @@ function AdminLogin() {
     navigate('/admin');
   };
   return (
-    <main className="main container auth-page">
+    <main id="main-content" className="main container auth-page">
       <span className="eyebrow">Acesso restrito</span>
       <h1>
         Entrar no
@@ -19,11 +19,11 @@ function AdminLogin() {
       <form className="auth-form" onSubmit={submit}>
         <label>
           E-mail
-          <input name="email" type="email" placeholder="voce@alpha.local" required />
+          <input name="email" type="email" autoComplete="username" placeholder="voce@alpha.local" required />
         </label>
         <label>
           Senha
-          <input name="password" type="password" placeholder="••••••••" required />
+          <input name="password" type="password" autoComplete="current-password" placeholder="••••••••" required />
         </label>
         <button className="button">Entrar</button>
       </form>

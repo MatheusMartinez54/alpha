@@ -1,136 +1,100 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, ShoppingCart, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Menu, ShoppingCart, X, ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
 import { useCart } from '../../context/CartContext.jsx';
 import { useStore } from '../../context/StoreContext.jsx';
 import Logo from '../Logo/Logo.jsx';
 import SearchBar from '../SearchBar/SearchBar.jsx';
 import CartDrawer from '../CartDrawer/CartDrawer.jsx';
+import Dialog from '../Dialog/Dialog.jsx';
 
 function Header() {
   const [open, setOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const headerRef = useRef(null);
-  const menuRef = useRef(null);
   const { totalItems } = useCart();
   const { categories } = useStore();
   const location = useLocation();
   const navigate = useNavigate();
+  const checkout = location.pathname === '/checkout';
   const close = () => setOpen(false);
   const visibleCategories = categories.filter((category) => category.active);
-  const showSearch = location.pathname !== '/checkout';
-
-  useEffect(() => {
-    if (!open) return;
-    const handleKey = (event) => {
-      if (event.key === 'Escape') {
-        setOpen(false);
-        menuRef.current?.focus();
-      }
-    };
-    const handleOutside = (event) => {
-      if (!headerRef.current?.contains(event.target)) setOpen(false);
-    };
-    const desktop = window.matchMedia('(min-width: 768px)');
-    const handleResize = () => {
-      if (desktop.matches) setOpen(false);
-    };
-    document.addEventListener('keydown', handleKey);
-    document.addEventListener('pointerdown', handleOutside);
-    desktop.addEventListener('change', handleResize);
-    return () => {
-      document.removeEventListener('keydown', handleKey);
-      document.removeEventListener('pointerdown', handleOutside);
-      desktop.removeEventListener('change', handleResize);
-    };
-  }, [open]);
+  const query = new URLSearchParams(location.search).get('busca') || '';
 
   return (
     <>
-      <header className="site-header" ref={headerRef}>
+      <header className={`site-header${checkout ? ' site-header--checkout' : ''}`}>
         <div className="container header-inner">
-          <div className="mobile-topbar">
+          {!checkout && (
             <button
-              ref={menuRef}
               className="icon-button menu-button"
               type="button"
-              aria-label={open ? 'Fechar menu' : 'Abrir menu'}
-              aria-expanded={open}
-              aria-controls="category-drawer"
-              onClick={() => setOpen(!open)}
+              aria-label="Abrir menu"
+              aria-haspopup="dialog"
+              onClick={() => setOpen(true)}
             >
-              {open ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
+              <Menu size={22} aria-hidden="true" />
             </button>
-
-            <Link className="brand" to="/" onClick={close} aria-label="Alpha Imports — início">
-              <Logo />
-              <span className="brand-text">ALPHA IMPORTES</span>
+          )}
+          <Link className="brand" to="/" aria-label="Alpha Imports — início">
+            <Logo />
+            <span className="brand-text">ALPHA IMPORTES</span>
+          </Link>
+          {checkout ? (
+            <Link className="back-link header-back" to="/carrinho">
+              <ArrowLeft size={16} aria-hidden="true" /> Carrinho
             </Link>
-
-            <button
-              type="button"
-              className="cart-link"
-              onClick={() => setIsCartOpen(true)}
-              aria-label={`Abrir carrinho, ${totalItems} ${totalItems === 1 ? 'item' : 'itens'}`}
-            >
-              <ShoppingCart size={21} aria-hidden="true" />
-              {totalItems > 0 && (
-                <span className="cart-count" aria-hidden="true">
-                  {totalItems}
-                </span>
-              )}
-            </button>
-          </div>
-
-          <div className="header-panel">
-            {showSearch && (
+          ) : (
+            <>
               <div className="header-search-wrap">
                 <SearchBar
-                  onSearch={(search) => {
-                    navigate(`/produtos?busca=${encodeURIComponent(search)}`);
-                    close();
-                  }}
+                  key={query}
+                  initialValue={query}
+                  onSearch={(search) => navigate(search ? `/produtos?busca=${encodeURIComponent(search)}` : '/produtos')}
                 />
               </div>
-            )}
-          </div>
+              <button
+                type="button"
+                className="cart-link"
+                onClick={() => setIsCartOpen(true)}
+                aria-haspopup="dialog"
+                aria-label={`Abrir carrinho, ${totalItems} ${totalItems === 1 ? 'item' : 'itens'}`}
+              >
+                <ShoppingCart size={21} aria-hidden="true" />
+                <span className="cart-label">Carrinho</span>
+                {totalItems > 0 && (
+                  <span className="cart-count" aria-hidden="true">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
+            </>
+          )}
         </div>
       </header>
-
-      {open && <button type="button" className="nav-overlay" aria-label="Fechar menu de categorias" onClick={close} />}
-      <aside
-        id="category-drawer"
-        className={`category-drawer${open ? ' is-open' : ''}`}
-        aria-modal="true"
-        role="dialog"
-        aria-label="Categorias da loja"
-      >
-        <header className="cart-drawer__header category-drawer__header">
-          <div>
-            <span className="eyebrow">Navegação</span>
-            <h2>Categorias</h2>
-          </div>
-          <button type="button" className="icon-button" aria-label="Fechar menu" onClick={close}>
-            <X size={20} aria-hidden="true" />
-          </button>
-        </header>
-
-        <nav className="category-drawer__menu" aria-label="Menu de categorias">
-          <Link to="/" onClick={close} className="category-drawer__item">
-            Início
-          </Link>
-          <Link to="/produtos" onClick={close} className="category-drawer__item">
-            Todos os produtos
-          </Link>
-          {visibleCategories.map((category) => (
-            <Link key={category.id} to={`/produtos?categoria=${category.id}`} onClick={close} className="category-drawer__item">
-              {category.name}
+      {open && (
+        <Dialog className="store-drawer store-drawer--left" onClose={close} aria-labelledby="category-title">
+          <header className="drawer-header">
+            <h2 id="category-title">Categorias</h2>
+            <button type="button" className="icon-button" aria-label="Fechar menu" onClick={close}>
+              <X size={20} aria-hidden="true" />
+            </button>
+          </header>
+          <nav className="category-drawer__menu drawer-body" aria-label="Menu de categorias">
+            <Link to="/" onClick={close}>
+              Início
             </Link>
-          ))}
-        </nav>
-      </aside>
-
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+            <Link to="/produtos" onClick={close}>
+              Todos os produtos
+            </Link>
+            {visibleCategories.map((category) => (
+              <Link key={category.id} to={`/produtos?categoria=${encodeURIComponent(category.id)}`} onClick={close}>
+                {category.name}
+              </Link>
+            ))}
+          </nav>
+        </Dialog>
+      )}
+      {isCartOpen && <CartDrawer onClose={() => setIsCartOpen(false)} />}
     </>
   );
 }

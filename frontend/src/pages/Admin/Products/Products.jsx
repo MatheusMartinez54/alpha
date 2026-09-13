@@ -6,27 +6,33 @@ import ProductThumbnail from '../../../components/Admin/ProductThumbnail/Product
 import StatusBadge from '../../../components/Admin/StatusBadge/StatusBadge.jsx';
 import EmptyState from '../../../components/Admin/EmptyState/EmptyState.jsx';
 import { useStore } from '../../../context/StoreContext.jsx';
+import { formatCurrency, normalizeSearch } from '../../../utils/format.js';
 import '../../../styles/admin-catalog.css';
-
-const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
 function AdminProductsPage() {
   const { products, setProducts, categories } = useStore();
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const catalogProducts = useMemo(() => {
+    const categoryNames = new Map(categories.map((category) => [category.id, category.name]));
+    return products.map((product) => ({
+      ...product,
+      categoryName: categoryNames.get(product.categoryId) || product.categoryName || 'Sem categoria',
+    }));
+  }, [products, categories]);
 
   const filteredProducts = useMemo(() => {
-    const term = search.trim().toLowerCase();
+    const term = normalizeSearch(search);
 
-    if (!term) return products;
+    if (!term) return catalogProducts;
 
-    return products.filter((product) => {
-      const matchesName = product.name.toLowerCase().includes(term);
-      const matchesCategory = product.categoryName?.toLowerCase().includes(term);
+    return catalogProducts.filter((product) => {
+      const matchesName = normalizeSearch(product.name).includes(term);
+      const matchesCategory = normalizeSearch(product.categoryName).includes(term);
       return matchesName || matchesCategory;
     });
-  }, [products, search]);
+  }, [catalogProducts, search]);
 
   const openCreateModal = () => {
     setEditingProduct(null);
@@ -82,6 +88,7 @@ function AdminProductsPage() {
   };
 
   const handleStockUpdate = (productId, value) => {
+    if (!Number.isInteger(value) || value < 0) return;
     setProducts((current) => current.map((product) => (product.id === productId ? { ...product, stock: Number(value) } : product)));
   };
 
@@ -116,19 +123,34 @@ function AdminProductsPage() {
       ) : (
         <ul className="admin-record-list" aria-label="Listagem de produtos">
           {filteredProducts.map((product) => (
-            <AdminRecord key={product.id}
+            <AdminRecord
+              key={product.id}
               image={<ProductThumbnail src={product.image} alt={product.name} />}
-              title={product.name} description={product.description}
-              details={<>
-                <span className="admin-record__category">{product.categoryName}</span>
-                <span className="admin-record__price">{currency.format(Number(product.price))}</span>
-                <span className={`stock-pill ${product.stock === 0 ? 'stock-pill--empty' : product.stock <= 5 ? 'stock-pill--low' : ''}`}>{product.stock} un.</span>
-                <StatusBadge active={product.active} />
-              </>}
-              actions={<>
-                <AdminRecordAction label={`Editar ${product.name}`} onClick={() => openEditModal(product)}><Pencil size={18} aria-hidden="true" /></AdminRecordAction>
-                <AdminRecordAction label={`${product.active ? 'Desativar' : 'Ativar'} ${product.name}`} onClick={() => handleToggleStatus(product.id)}><Power size={18} aria-hidden="true" /></AdminRecordAction>
-              </>}
+              title={product.name}
+              description={product.description}
+              details={
+                <>
+                  <span className="admin-record__category">{product.categoryName}</span>
+                  <span className="admin-record__price">{formatCurrency(product.price)}</span>
+                  <span className={`stock-pill ${product.stock === 0 ? 'stock-pill--empty' : product.stock <= 5 ? 'stock-pill--low' : ''}`}>
+                    {product.stock} un.
+                  </span>
+                  <StatusBadge active={product.active} />
+                </>
+              }
+              actions={
+                <>
+                  <AdminRecordAction label={`Editar ${product.name}`} onClick={() => openEditModal(product)}>
+                    <Pencil size={18} aria-hidden="true" />
+                  </AdminRecordAction>
+                  <AdminRecordAction
+                    label={`${product.active ? 'Desativar' : 'Ativar'} ${product.name}`}
+                    onClick={() => handleToggleStatus(product.id)}
+                  >
+                    <Power size={18} aria-hidden="true" />
+                  </AdminRecordAction>
+                </>
+              }
             />
           ))}
         </ul>

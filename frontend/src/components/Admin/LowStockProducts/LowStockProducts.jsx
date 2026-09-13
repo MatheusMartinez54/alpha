@@ -1,20 +1,29 @@
+import { Link } from 'react-router-dom';
+
 function LowStockProducts({ products }) {
   return (
     <section className="admin-panel">
       <div className="admin-panel__header">
-        <h3>Estoque baixo</h3>
+        <h2>Estoque baixo</h2>
+        <Link className="back-link" to="/admin/produtos">
+          Gerenciar produtos
+        </Link>
       </div>
 
-      <div className="stock-list">
-        {products.map((product) => (
-          <div key={product.name} className="stock-item">
-            <div>
-              <strong>{product.name}</strong>
-            </div>
-            <span>Estoque: {product.stock} unidades</span>
-          </div>
-        ))}
-      </div>
+      {products.length === 0 ? (
+        <p className="admin-panel__empty">Nenhum produto ativo com estoque baixo.</p>
+      ) : (
+        <ul className="stock-list">
+          {products.map((product) => (
+            <li key={product.id} className="stock-item">
+              <div>
+                <strong>{product.name}</strong>
+              </div>
+              <span>{product.stock === 0 ? 'Sem estoque' : `${product.stock} ${product.stock === 1 ? 'unidade' : 'unidades'}`}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

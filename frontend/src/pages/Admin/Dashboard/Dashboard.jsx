@@ -1,21 +1,34 @@
 import { ArrowUpRight, Boxes, Package, ShoppingCart, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import DashboardCard from '../../../components/Admin/DashboardCard/DashboardCard.jsx';
 import LowStockProducts from '../../../components/Admin/LowStockProducts/LowStockProducts.jsx';
-
-const stats = [
-  { title: 'Produtos', value: '48', description: '+6 nesta semana', icon: Package },
-  { title: 'Pedidos hoje', value: '12', description: '4 entregas em andamento', icon: ShoppingCart },
-  { title: 'Vendas hoje', value: 'R$ 1.248,90', description: 'Lucro estimado de 22%', icon: TrendingUp },
-  { title: 'Pedidos em aberto', value: '3', description: '1 precisa de atenção', icon: Boxes },
-];
-
-const lowStockProducts = [
-  { name: 'Produto A', stock: 3 },
-  { name: 'Produto B', stock: 2 },
-  { name: 'Produto C', stock: 1 },
-];
+import RecentOrders from '../../../components/Admin/RecentOrders/RecentOrders.jsx';
+import { useStore } from '../../../context/StoreContext.jsx';
+import { formatCurrency } from '../../../utils/format.js';
 
 function Dashboard() {
+  const { products, orders } = useStore();
+  const today = new Date().toDateString();
+  const todaysOrders = orders.filter((order) => new Date(order.createdAt).toDateString() === today);
+  const openOrders = orders.filter((order) => order.status === 'Aberto');
+  const lowStockProducts = products.filter((product) => product.active && product.stock <= 5).sort((a, b) => a.stock - b.stock);
+  const stats = [
+    {
+      title: 'Produtos',
+      value: products.length,
+      description: `${products.filter((product) => product.active).length} ativos no catálogo`,
+      icon: Package,
+    },
+    { title: 'Pedidos hoje', value: todaysOrders.length, description: 'Pedidos recebidos hoje', icon: ShoppingCart },
+    {
+      title: 'Valor em pedidos hoje',
+      value: formatCurrency(todaysOrders.reduce((sum, order) => sum + order.total, 0)),
+      description: 'Total dos pedidos recebidos hoje',
+      icon: TrendingUp,
+    },
+    { title: 'Pedidos em aberto', value: openOrders.length, description: 'Aguardando aceite da loja', icon: Boxes },
+  ];
+
   return (
     <div className="admin-page-content">
       <div className="admin-page-header">
@@ -24,10 +37,10 @@ function Dashboard() {
           <p>Visão geral da sua loja</p>
         </div>
 
-        <button type="button" className="admin-page-header__button">
-          <ArrowUpRight size={16} />
-          Relatório
-        </button>
+        <Link to="/admin/pedidos" className="admin-page-header__button">
+          Ver pedidos
+          <ArrowUpRight size={16} aria-hidden="true" />
+        </Link>
       </div>
 
       <div className="dashboard-grid">
@@ -36,7 +49,8 @@ function Dashboard() {
         ))}
       </div>
 
-      <div className="dashboard-panel-wrapper">
+      <div className="dashboard-panels">
+        <RecentOrders orders={orders.slice(0, 5)} />
         <LowStockProducts products={lowStockProducts} />
       </div>
     </div>

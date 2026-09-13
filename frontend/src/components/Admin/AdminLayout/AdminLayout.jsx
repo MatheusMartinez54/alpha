@@ -20,10 +20,17 @@ function AdminLayout({ children, title, subtitle }) {
       const elements = [...sidebar.querySelectorAll('a[href], button:not(:disabled)')];
       const first = elements[0];
       const last = elements[elements.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
     };
-    const onResize = () => { if (!mobileQuery.matches) closeSidebar(); };
+    const onResize = () => {
+      if (!mobileQuery.matches) closeSidebar();
+    };
     document.body.style.overflow = 'hidden';
     sidebar.querySelector('button')?.focus();
     document.addEventListener('keydown', onKeyDown);
@@ -39,11 +46,25 @@ function AdminLayout({ children, title, subtitle }) {
   return (
     <div className="admin-shell">
       <AdminSidebar ref={sidebarRef} isOpen={isSidebarOpen} onClose={closeSidebar} />
-      <button type="button" className={`admin-overlay ${isSidebarOpen ? 'is-visible' : ''}`}
-        aria-label="Fechar menu administrativo" tabIndex={-1} aria-hidden="true" onClick={closeSidebar} />
+      <button
+        type="button"
+        className={`admin-overlay ${isSidebarOpen ? 'is-visible' : ''}`}
+        aria-label="Fechar menu administrativo"
+        tabIndex={-1}
+        aria-hidden="true"
+        onClick={closeSidebar}
+      />
       <div className="admin-content" inert={isSidebarOpen ? true : undefined}>
-        <AdminHeader title={title} subtitle={subtitle} toggleRef={toggleRef} isSidebarOpen={isSidebarOpen} onToggleSidebar={() => setIsSidebarOpen((current) => !current)} />
-        <main className="admin-main">{children}</main>
+        <AdminHeader
+          title={title}
+          subtitle={subtitle}
+          toggleRef={toggleRef}
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={() => setIsSidebarOpen((current) => !current)}
+        />
+        <main id="main-content" className="admin-main">
+          {children}
+        </main>
       </div>
     </div>
   );
