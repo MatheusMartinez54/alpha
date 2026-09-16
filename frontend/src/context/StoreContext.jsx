@@ -14,9 +14,15 @@ function readStorage(key, fallback) {
   }
 }
 
+function readCatalog(key, defaults) {
+  const saved = readStorage(key, defaults);
+  const savedIds = new Set(saved.map((item) => item.id));
+  return [...saved, ...defaults.filter((item) => !savedIds.has(item.id))];
+}
+
 export function StoreProvider({ children }) {
-  const [categories, setCategories] = useState(() => readStorage(`${CATALOG_KEY}-categories`, mockCategories));
-  const [products, setProducts] = useState(() => readStorage(`${CATALOG_KEY}-products`, mockProducts));
+  const [categories, setCategories] = useState(() => readCatalog(`${CATALOG_KEY}-categories`, mockCategories));
+  const [products, setProducts] = useState(() => readCatalog(`${CATALOG_KEY}-products`, mockProducts));
   const [orders, setOrders] = useState(() => readStorage(ORDERS_KEY, []));
 
   useEffect(() => localStorage.setItem(`${CATALOG_KEY}-categories`, JSON.stringify(categories)), [categories]);

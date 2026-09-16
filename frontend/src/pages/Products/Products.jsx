@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { SlidersHorizontal, Search, X } from 'lucide-react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { ArrowLeft, SlidersHorizontal, Search, X } from 'lucide-react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import ProductGrid from '../../components/ProductGrid/ProductGrid.jsx';
 import EmptyState from '../../components/EmptyState/EmptyState.jsx';
 import CatalogFilters from '../../components/CatalogFilters/CatalogFilters.jsx';
@@ -10,6 +10,7 @@ import { getProductPrice, normalizeSearch } from '../../utils/format.js';
 
 function Products() {
   const { products, categories } = useStore();
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const query = params.get('busca') || '';
@@ -30,8 +31,7 @@ function Products() {
   const filteredProducts = products.filter(
     (product) =>
       product.active &&
-      (!query ||
-        normalizeSearch(`${product.name} ${product.description || ''} ${product.categoryName || ''}`).includes(normalizeSearch(query))) &&
+      (!query || normalizeSearch(`${product.name} ${product.description || ''} ${product.categoryName || ''}`).includes(normalizeSearch(query))) &&
       (!category || category === 'novidades' || product.categoryId === category) &&
       (!inStock || product.stock > 0),
   );
@@ -43,6 +43,9 @@ function Products() {
 
   return (
     <main id="main-content" className="main container catalog-page">
+      <button className="back-link back-button" type="button" onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}>
+        <ArrowLeft size={16} aria-hidden="true" /> Voltar
+      </button>
       <div className="commerce-heading">
         <span className="eyebrow">Catálogo Alpha</span>
         <h1>{query ? `Busca: ${query}` : categoryName || 'Produtos'}</h1>

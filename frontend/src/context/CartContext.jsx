@@ -17,17 +17,15 @@ export function CartProvider({ children }) {
     setItems((current) => {
       const found = current.find((item) => item.id === product.id);
       return found
-        ? current.map((item) => (item.id === product.id ? { ...item, quantity: Math.min(product.stock, item.quantity + requested) } : item))
-        : [...current, { ...product, quantity: Math.min(product.stock, requested) }];
+        ? current.map((item) => (item.id === product.id ? { ...item, quantity: item.quantity + requested } : item))
+        : [...current, { ...product, quantity: requested }];
     });
     setToast('Produto adicionado ao carrinho');
   };
 
   const updateQuantity = (id, delta) => {
     setItems((current) =>
-      current
-        .map((item) => (item.id === id ? { ...item, quantity: Math.max(0, Math.min(item.stock, item.quantity + delta)) } : item))
-        .filter((item) => item.quantity > 0),
+      current.map((item) => (item.id === id ? { ...item, quantity: Math.max(0, item.quantity + delta) } : item)).filter((item) => item.quantity > 0),
     );
   };
 

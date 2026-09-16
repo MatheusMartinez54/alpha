@@ -168,6 +168,11 @@ button:disabled {
 .back-link:hover {
   color: var(--text);
 }
+.back-button {
+  padding: 0;
+  background: transparent;
+  text-align: left;
+}
 .empty {
   padding: 48px 24px;
   background: var(--surface);

@@ -13,7 +13,7 @@ const stores = [
   },
 ];
 
-function Footer({ compact = false, showFloatingContact = false }) {
+function Footer({ compact = false, showFloatingContact = false, showStoreInfo = false }) {
   return (
     <>
       <footer className="footer">
@@ -23,7 +23,7 @@ function Footer({ compact = false, showFloatingContact = false }) {
             <span>Escolhas com intenção.</span>
           </div>
 
-          {!compact && (
+          {!compact && showStoreInfo && (
             <div className="footer-stores">
               {stores.map((store) => (
                 <div key={store.name} className="footer-store">

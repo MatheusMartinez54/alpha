@@ -62,7 +62,7 @@ function AppRoutes() {
         </Routes>
       </Suspense>
       {!isAdminRoute && !isCheckout && <CartToast message={toast} visible={Boolean(toast)} />}
-      {!isAdminRoute && <Footer compact={isCheckout} showFloatingContact={location.pathname === '/'} />}
+      {!isAdminRoute && <Footer compact={isCheckout} showFloatingContact={location.pathname === '/'} showStoreInfo={location.pathname === '/'} />}
     </>
   );
 }

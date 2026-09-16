@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart } from 'lucide-react';
 import { useStore } from '../../context/StoreContext.jsx';
 import { useCart } from '../../context/CartContext.jsx';
@@ -9,12 +9,11 @@ import QuantitySelector from '../../components/QuantitySelector/QuantitySelector
 import EmptyState from '../../components/EmptyState/EmptyState.jsx';
 
 function ProductDetails({ product }) {
-  const { items, addItem } = useCart();
+  const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
-  const inCart = items.find((item) => item.id === product.id)?.quantity || 0;
-  const remaining = Math.max(0, product.stock - inCart);
-  const selectedQuantity = Math.max(1, Math.min(quantity, remaining));
+  const available = product.stock > 0;
+  const selectedQuantity = Math.max(1, quantity);
   const buy = () => {
     addItem(product, selectedQuantity);
     navigate('/checkout');
@@ -26,22 +25,16 @@ function ProductDetails({ product }) {
         <span className="eyebrow">{product.categoryName}</span>
         <h1>{product.name}</h1>
         <Price product={product} className="price--large" />
-        <p className="detail-availability">
-          {product.stock <= 0
-            ? 'Produto sem estoque no momento.'
-            : remaining === 0
-              ? 'Você já adicionou o estoque disponível ao carrinho.'
-              : 'Disponível para retirada na loja'}
-        </p>
+        <p className="detail-availability">{product.stock <= 0 ? 'Produto sem estoque no momento.' : 'Disponível para retirada na loja'}</p>
         <div className="detail-quantity">
           <span>Quantidade</span>
-          <QuantitySelector label={product.name} value={selectedQuantity} max={remaining} onChange={setQuantity} />
+          <QuantitySelector label={product.name} value={selectedQuantity} onChange={setQuantity} />
         </div>
         <div className="detail-actions">
-          <button className="button" disabled={remaining === 0} onClick={buy}>
+          <button className="button" disabled={!available} onClick={buy}>
             Comprar agora
           </button>
-          <button className="button secondary" disabled={remaining === 0} onClick={() => addItem(product, selectedQuantity)}>
+          <button className="button secondary" disabled={!available} onClick={() => addItem(product, selectedQuantity)}>
             <ShoppingCart size={18} aria-hidden="true" /> Adicionar ao carrinho
           </button>
         </div>
@@ -59,12 +52,13 @@ function ProductDetails({ product }) {
 function Product() {
   const { products } = useStore();
   const { id } = useParams();
+  const navigate = useNavigate();
   const product = products.find((item) => item.id === id && item.active);
   return (
     <main id="main-content" className="main container product-detail">
-      <Link className="back-link" to="/produtos">
+      <button className="back-link back-button" type="button" onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/produtos'))}>
         <ArrowLeft size={16} aria-hidden="true" /> Voltar ao catálogo
-      </Link>
+      </button>
       {product ? (
         <ProductDetails key={product.id} product={product} />
       ) : (
