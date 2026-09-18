@@ -1,11 +1,15 @@
+import { useState } from 'react';
+import { X } from 'lucide-react';
 import ProductGrid from '../../components/ProductGrid/ProductGrid.jsx';
 import CategoryMenu from '../../components/CategoryMenu/CategoryMenu.jsx';
+import Dialog from '../../components/Dialog/Dialog.jsx';
 import SectionHeader from '../../components/SectionHeader/SectionHeader.jsx';
 import EmptyState from '../../components/EmptyState/EmptyState.jsx';
 import { useStore } from '../../context/StoreContext.jsx';
 
 function Home() {
   const { products, categories } = useStore();
+  const [isCategoryDrawerOpen, setIsCategoryDrawerOpen] = useState(false);
   const available = products.filter((product) => product.active);
   const categoryList = categories.filter((category) => category.active);
   const featured = available.filter((product) => product.featured).slice(0, 4);
@@ -22,8 +26,21 @@ function Home() {
       </header>
       <div className="container home-categories">
         <span className="eyebrow">Explore as categorias</span>
-        <CategoryMenu />
+        <CategoryMenu limit={2} onMore={() => setIsCategoryDrawerOpen(true)} />
       </div>
+      {isCategoryDrawerOpen && (
+        <Dialog className="store-drawer store-drawer--left" onClose={() => setIsCategoryDrawerOpen(false)} aria-labelledby="home-category-title">
+          <header className="drawer-header">
+            <h2 id="home-category-title">Categorias</h2>
+            <button className="icon-button" type="button" aria-label="Fechar categorias" onClick={() => setIsCategoryDrawerOpen(false)}>
+              <X size={20} aria-hidden="true" />
+            </button>
+          </header>
+          <nav className="category-drawer__menu drawer-body" aria-label="Todas as categorias">
+            <CategoryMenu />
+          </nav>
+        </Dialog>
+      )}
       {featured.length > 0 && (
         <section className="container category-showcase" aria-label="Produtos em destaque">
           <SectionHeader title="Destaques" to="/produtos" />

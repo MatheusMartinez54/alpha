@@ -173,6 +173,12 @@ button:disabled {
   background: transparent;
   text-align: left;
 }
+.back-button--right {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  text-align: right;
+}
 .empty {
   padding: 48px 24px;
   background: var(--surface);

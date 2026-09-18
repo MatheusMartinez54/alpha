@@ -34,7 +34,11 @@ function Products() {
   if (sort === 'nome') filteredProducts.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
   return (
     <main id="main-content" className="main container catalog-page">
-      <button className="back-link back-button" type="button" onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}>
+      <button
+        className="back-link back-button back-button--right"
+        type="button"
+        onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/'))}
+      >
         <ArrowLeft size={16} aria-hidden="true" /> Voltar
       </button>
       <div className="commerce-heading">

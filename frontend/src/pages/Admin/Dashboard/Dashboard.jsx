@@ -37,10 +37,6 @@ function Dashboard() {
           <p>Visão geral da sua loja</p>
         </div>
 
-        <Link to="/admin/pedidos" className="admin-page-header__button">
-          Ver pedidos
-          <ArrowUpRight size={16} aria-hidden="true" />
-        </Link>
       </div>
 
       <div className="dashboard-grid">
