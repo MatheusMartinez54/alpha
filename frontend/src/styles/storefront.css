@@ -184,6 +184,9 @@
 .category-showcase {
   padding-top: clamp(32px, 4vw, 48px);
 }
+.category-showcase--category .product-grid {
+  gap: clamp(16px, 2vw, 24px);
+}
 .section-heading {
   display: flex;
   flex-wrap: wrap;
@@ -260,6 +263,11 @@
 .footer-branding span,
 .footer small {
   font-size: 0.8125rem;
+}
+@media (max-width: 559px) {
+  .category-showcase--category .product-grid > :nth-child(n + 2) {
+    display: none;
+  }
 }
 /* Keep the contact action compact and leave room to scroll content clear of it. */
 .floating-contact {

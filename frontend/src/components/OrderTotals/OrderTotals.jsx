@@ -11,7 +11,7 @@ function OrderTotals({ total, count }) {
       </div>
       <div>
         <dt>Entrega</dt>
-        <dd>Retirada na loja</dd>
+        <dd>A combinar</dd>
       </div>
       <div className="order-totals__total">
         <dt>Total</dt>

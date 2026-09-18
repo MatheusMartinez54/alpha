@@ -1,15 +1,16 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { ArrowLeft, LayoutDashboard, LogOut, Package, Settings, ShoppingCart, Tags, X } from 'lucide-react';
+import { Bike, ChevronLeft, ChevronRight, LayoutDashboard, LogOut, Package, ShoppingCart, Tags, X } from 'lucide-react';
 import Logo from '../../Logo/Logo.jsx';
 
 const menuItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/produtos', label: 'Produtos', icon: Package },
   { to: '/admin/pedidos', label: 'Pedidos', icon: ShoppingCart },
+  { to: '/admin/entregadores', label: 'Entregadores', icon: Bike },
   { to: '/admin/categorias', label: 'Categorias', icon: Tags },
 ];
 
-function AdminSidebar({ isOpen, onClose, ref }) {
+function AdminSidebar({ isOpen, isCollapsed, onToggleCollapse, onClose, ref }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -18,10 +19,29 @@ function AdminSidebar({ isOpen, onClose, ref }) {
   };
 
   return (
-    <aside ref={ref} id="admin-navigation" aria-label="Navegação administrativa" className={`admin-sidebar ${isOpen ? 'is-open' : ''}`}>
+    <aside
+      ref={ref}
+      id="admin-navigation"
+      aria-label="Navegação administrativa"
+      className={`admin-sidebar ${isOpen ? 'is-open' : ''} ${isCollapsed ? 'is-collapsed' : ''}`}
+    >
       <div className="admin-sidebar__brand">
-        <Link to="/" onClick={onClose} aria-label="Alpha Imports — voltar à loja"><Logo className="admin-sidebar__logo" /></Link>
-        <button type="button" className="admin-sidebar__close" aria-label="Fechar menu administrativo" onClick={onClose}><X size={20} aria-hidden="true" /></button>
+        <Link to="/" onClick={onClose} aria-label="Alpha Imports — voltar à loja">
+          <Logo className="admin-sidebar__logo" />
+        </Link>
+        <button
+          type="button"
+          className="admin-sidebar__collapse"
+          aria-label={isCollapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
+          aria-pressed={isCollapsed}
+          title={isCollapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
+          onClick={onToggleCollapse}
+        >
+          {isCollapsed ? <ChevronRight size={18} aria-hidden="true" /> : <ChevronLeft size={18} aria-hidden="true" />}
+        </button>
+        <button type="button" className="admin-sidebar__close" aria-label="Fechar menu administrativo" onClick={onClose}>
+          <X size={20} aria-hidden="true" />
+        </button>
       </div>
 
       <nav className="admin-sidebar__nav" aria-label="Menu administrativo">
@@ -33,20 +53,7 @@ function AdminSidebar({ isOpen, onClose, ref }) {
         ))}
       </nav>
 
-      <div className="admin-sidebar__section">
-        <span className="admin-sidebar__label">Configurações</span>
-        <NavLink to="/admin/configuracoes" className={({ isActive }) => `admin-sidebar__item ${isActive ? 'active' : ''}`} onClick={onClose}>
-          <Settings size={18} />
-          <span>Configurações</span>
-        </NavLink>
-      </div>
-
       <div className="admin-sidebar__footer">
-        <Link to="/" className="admin-sidebar__footer-link" onClick={onClose}>
-          <ArrowLeft size={16} />
-          <span>Voltar para loja</span>
-        </Link>
-
         <div className="admin-sidebar__profile">
           <div className="admin-sidebar__avatar">A</div>
           <div className="admin-sidebar__profile-text">

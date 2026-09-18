@@ -6,7 +6,123 @@ export const mockCategories = [
   { id: 'ignite', name: 'IGNITE', active: true },
   { id: 'elfbar', name: 'ELFBAR', active: true },
   { id: 'life-pod', name: 'LIFE POD', active: true },
+  { id: 'juices', name: 'Juices', active: true },
+  { id: 'carregadores', name: 'Carregadores', active: true },
+  { id: 'kits', name: 'Kits e Presentes', active: true },
 ];
+
+const additionalProductGroups = [
+  {
+    categoryId: 'bebidas',
+    categoryName: 'Bebidas',
+    products: [
+      ['Água Mineral 500ml', 3.5],
+      ['Refrigerante Cola Lata', 5.5],
+      ['Energético Original', 11.9],
+      ['Suco Natural de Uva', 8.9],
+    ],
+  },
+  {
+    categoryId: 'tabacos',
+    categoryName: 'Tabacos',
+    products: [
+      ['Seda King Size Brown', 8.9],
+      ['Seda King Size White', 9.9],
+      ['Piteira de Papel', 6.5],
+      ['Fumo para Enrolar 25g', 29.9],
+    ],
+  },
+  {
+    categoryId: 'acessorios',
+    categoryName: 'Acessórios',
+    products: [
+      ['Isqueiro Metalizado', 14.9],
+      ['Cinzeiro de Vidro', 24.9],
+      ['Porta-objetos Compacto', 19.9],
+      ['Tesoura Multiuso', 17.9],
+    ],
+  },
+  {
+    categoryId: 'papelaria',
+    categoryName: 'Papelaria',
+    products: [
+      ['Caneta Esferográfica Premium', 7.9],
+      ['Bloco de Anotações', 15.9],
+      ['Marcador de Texto', 6.9],
+      ['Estojo Organizador', 22.9],
+    ],
+  },
+  {
+    categoryId: 'ignite',
+    categoryName: 'IGNITE',
+    products: [['IGNITE V250', 130]],
+  },
+  {
+    categoryId: 'elfbar',
+    categoryName: 'ELFBAR',
+    products: [
+      ['ELFBAR 20K', 110],
+      ['ELFBAR 30K', 135],
+    ],
+  },
+  {
+    categoryId: 'life-pod',
+    categoryName: 'LIFE POD',
+    products: [
+      ['REFIL LIFE 12K', 105],
+      ['REFIL LIFE 15K', 115],
+      ['REFIL LIFE 20K', 125],
+    ],
+  },
+  {
+    categoryId: 'juices',
+    categoryName: 'Juices',
+    products: [
+      ['Juice Morango Ice', 39.9],
+      ['Juice Melancia Fresh', 39.9],
+      ['Juice Uva Gelada', 42.9],
+      ['Juice Maracujá Ice', 42.9],
+      ['Juice Frutas Vermelhas', 44.9],
+    ],
+  },
+  {
+    categoryId: 'carregadores',
+    categoryName: 'Carregadores',
+    products: [
+      ['Carregador USB-C', 29.9],
+      ['Carregador Turbo', 49.9],
+      ['Cabo USB-C Reforçado', 24.9],
+      ['Cabo Lightning Reforçado', 29.9],
+      ['Adaptador de Tomada', 34.9],
+    ],
+  },
+  {
+    categoryId: 'kits',
+    categoryName: 'Kits e Presentes',
+    products: [
+      ['Kit Iniciante', 59.9],
+      ['Kit Presente Alpha', 79.9],
+      ['Kit Acessórios Essenciais', 69.9],
+      ['Kit Viagem', 89.9],
+      ['Kit Premium', 129.9],
+    ],
+  },
+];
+
+const additionalProducts = additionalProductGroups.flatMap(({ categoryId, categoryName, products }) =>
+  products.map(([name, price], index) => ({
+    id: `${categoryId}-extra-${index + 1}`,
+    name,
+    description: `${name} selecionado para complementar sua experiência Alpha.`,
+    price,
+    promotionalPrice: price,
+    categoryId,
+    categoryName,
+    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80',
+    stock: 30,
+    active: true,
+  })),
+);
 
 export const mockProducts = [
   {
@@ -156,4 +272,5 @@ export const mockProducts = [
     stock: 100,
     active: true,
   },
+  ...additionalProducts,
 ];

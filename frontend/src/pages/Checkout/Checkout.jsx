@@ -9,7 +9,6 @@ import ProductImage from '../../components/ProductImage/ProductImage.jsx';
 import OrderTotals from '../../components/OrderTotals/OrderTotals.jsx';
 import EmptyState from '../../components/EmptyState/EmptyState.jsx';
 
-const stores = ['Loja Centro', 'Loja Jardim', 'Loja Aeroporto'];
 const paymentOptions = ['PIX', 'Dinheiro', 'Cartão'];
 
 function Checkout() {
@@ -17,7 +16,8 @@ function Checkout() {
   const { addOrder } = useStore();
   const [customerName, setCustomerName] = useState('');
   const [phone, setPhone] = useState('');
-  const [store, setStore] = useState('');
+  const [location, setLocation] = useState('');
+  const [reference, setReference] = useState('');
   const [payment, setPayment] = useState('');
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -40,7 +40,7 @@ function Checkout() {
     const nextErrors = {};
     if (!customerName.trim()) nextErrors.customerName = 'Informe seu nome.';
     if (!phone.trim()) nextErrors.phone = 'Informe seu telefone.';
-    if (!store) nextErrors.store = 'Selecione uma loja.';
+    if (!location.trim()) nextErrors.location = 'Informe o endereço de entrega.';
     if (!payment) nextErrors.payment = 'Selecione a forma de pagamento.';
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) {
@@ -48,15 +48,15 @@ function Checkout() {
         ? '#customer-name'
         : nextErrors.phone
           ? '#customer-phone'
-          : nextErrors.store
-            ? '[name="store"]'
+          : nextErrors.location
+            ? '#delivery-location'
             : '[name="payment"]';
       event.currentTarget.querySelector(firstField)?.focus();
       return;
     }
     if (!items.length) return;
     submitting.current = true;
-    addOrder({ items, total, store, payment, customerName, phone });
+    addOrder({ items, total, location, reference, payment, customerName, phone });
     clearCart();
     setSubmitted(true);
   };
@@ -69,7 +69,7 @@ function Checkout() {
           announce
           icon={CheckCircle2}
           title="Pedido confirmado"
-          description={`Recebemos seu pedido para retirada em ${store}. Em breve nossa equipe vai confirmar os detalhes.`}
+          description={`Recebemos seu pedido para entrega em ${location}. Em breve nossa equipe vai confirmar os detalhes.`}
           to="/produtos"
           action="Continuar comprando"
         />
@@ -78,13 +78,7 @@ function Checkout() {
   if (!items.length)
     return (
       <main id="main-content" className="main container">
-        <EmptyState
-          heading="h1"
-          title="Carrinho vazio"
-          description="Adicione produtos antes de finalizar."
-          to="/produtos"
-          action="Ver produtos"
-        />
+        <EmptyState heading="h1" title="Carrinho vazio" description="Adicione produtos antes de finalizar." to="/produtos" action="Ver produtos" />
       </main>
     );
 
@@ -96,7 +90,7 @@ function Checkout() {
         </Link>
         <span className="eyebrow">Última etapa</span>
         <h1>Finalizar compra</h1>
-        <p>Informe seus dados e escolha onde retirar o pedido.</p>
+        <p>Informe seus dados e o endereço para entrega.</p>
       </div>
       <form className="checkout-form" onSubmit={handleSubmit} noValidate>
         <div className="checkout-column">
@@ -136,33 +130,29 @@ function Checkout() {
           </section>
           <section className="checkout-panel">
             <h2>
-              <span className="step-number">2</span> Retirada na loja
+              <span className="step-number">2</span> Localização de entrega
             </h2>
-            <p>Selecione a loja onde deseja retirar seus produtos.</p>
-            <fieldset className="choice-fieldset" aria-describedby={errors.store ? 'store-error' : undefined}>
-              <legend className="sr-only">Loja de retirada</legend>
-              <div className="choice-grid">
-                {stores.map((option) => (
-                  <label className="choice-option" key={option}>
-                    <input
-                      type="radio"
-                      name="store"
-                      value={option}
-                      checked={store === option}
-                      onChange={() => updateField('store', setStore, option)}
-                      required
-                      aria-invalid={Boolean(errors.store)}
-                    />
-                    <span>{option}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-            {errors.store && (
-              <small id="store-error" className="field-error">
-                {errors.store}
-              </small>
-            )}
+            <FormField
+              id="delivery-location"
+              name="location"
+              label="Endereço ou localização"
+              type="text"
+              autoComplete="street-address"
+              required
+              value={location}
+              onChange={(event) => updateField('location', setLocation, event.target.value)}
+              placeholder="Rua, número, bairro e cidade"
+              error={errors.location}
+            />
+            <FormField
+              id="delivery-reference"
+              name="reference"
+              label="Referência"
+              type="text"
+              value={reference}
+              onChange={(event) => updateField('reference', setReference, event.target.value)}
+              placeholder="Ex.: portão azul, perto da praça"
+            />
           </section>
           <section className="checkout-panel">
             <h2>

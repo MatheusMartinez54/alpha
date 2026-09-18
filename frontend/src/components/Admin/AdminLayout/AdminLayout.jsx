@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import AdminHeader from '../AdminHeader/AdminHeader.jsx';
 import AdminSidebar from '../AdminSidebar/AdminSidebar.jsx';
+import { Menu } from 'lucide-react';
 
-function AdminLayout({ children, title, subtitle }) {
+function AdminLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => localStorage.getItem('alpha-admin-sidebar-collapsed') === 'true');
   const sidebarRef = useRef(null);
   const toggleRef = useRef(null);
   const closeSidebar = useCallback(() => setIsSidebarOpen(false), []);
@@ -45,7 +46,19 @@ function AdminLayout({ children, title, subtitle }) {
 
   return (
     <div className="admin-shell">
-      <AdminSidebar ref={sidebarRef} isOpen={isSidebarOpen} onClose={closeSidebar} />
+      <AdminSidebar
+        ref={sidebarRef}
+        isOpen={isSidebarOpen}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => {
+          setIsSidebarCollapsed((current) => {
+            const next = !current;
+            localStorage.setItem('alpha-admin-sidebar-collapsed', String(next));
+            return next;
+          });
+        }}
+        onClose={closeSidebar}
+      />
       <button
         type="button"
         className={`admin-overlay ${isSidebarOpen ? 'is-visible' : ''}`}
@@ -55,13 +68,17 @@ function AdminLayout({ children, title, subtitle }) {
         onClick={closeSidebar}
       />
       <div className="admin-content" inert={isSidebarOpen ? true : undefined}>
-        <AdminHeader
-          title={title}
-          subtitle={subtitle}
-          toggleRef={toggleRef}
-          isSidebarOpen={isSidebarOpen}
-          onToggleSidebar={() => setIsSidebarOpen((current) => !current)}
-        />
+        <button
+          ref={toggleRef}
+          type="button"
+          className="admin-mobile-toggle admin-mobile-toggle--floating"
+          aria-label="Abrir menu administrativo"
+          aria-expanded={isSidebarOpen}
+          aria-controls="admin-navigation"
+          onClick={() => setIsSidebarOpen((current) => !current)}
+        >
+          <Menu size={20} aria-hidden="true" />
+        </button>
         <main id="main-content" className="admin-main">
           {children}
         </main>

@@ -14,7 +14,9 @@ function Home() {
     <main id="main-content" className="main home-main">
       <header className="container home-intro">
         <div className="home-intro__content">
-          <h1>Alpha <span>Imports</span></h1>
+          <h1>
+            Alpha <span>Imports</span>
+          </h1>
           <p>Produtos e acessórios para o seu dia a dia.</p>
         </div>
       </header>
@@ -32,7 +34,7 @@ function Home() {
         const items = available.filter((product) => product.categoryId === category.id).slice(0, 4);
         if (!items.length) return null;
         return (
-          <section key={category.id} className="container category-showcase" aria-label={`Produtos de ${category.name}`}>
+          <section key={category.id} className="container category-showcase category-showcase--category" aria-label={`Produtos de ${category.name}`}>
             <SectionHeader title={category.name} to={`/produtos?categoria=${encodeURIComponent(category.id)}`} linkText="Ver todos" />
             <ProductGrid products={items} />
           </section>
