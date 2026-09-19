@@ -1,7 +1,9 @@
 .admin-modal {
   width: min(600px, calc(100% - 32px));
   max-width: calc(100% - 32px);
+  height: min(85vh, calc(100vh - 32px));
   max-height: min(85vh, calc(100vh - 32px));
+  height: min(85dvh, calc(100dvh - 32px));
   max-height: min(85dvh, calc(100dvh - 32px));
   box-sizing: border-box;
   margin: auto;
@@ -332,6 +334,7 @@
   .admin-modal {
     width: calc(100vw - 24px);
     max-width: calc(100vw - 24px);
+    height: calc(100dvh - 24px);
     max-height: calc(100dvh - 24px);
     margin: auto;
   }
