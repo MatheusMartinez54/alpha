@@ -439,6 +439,7 @@
 }
 .admin-order-list {
   display: grid;
+  gap: 16px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -448,8 +449,16 @@
   grid-template-columns: minmax(0, 1fr) minmax(160px, 200px);
   align-items: center;
   gap: 20px 32px;
-  padding: 24px 0;
-  border-bottom: 1px solid var(--line);
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.admin-order__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
 .admin-order h2 {
   font-size: 1rem;
@@ -504,6 +513,21 @@
   align-items: center;
   min-height: 44px;
   color: var(--accent);
+}
+.admin-order__location {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--accent);
+  background: var(--surface-2);
+}
+.admin-order__location:hover {
+  border-color: var(--accent);
+  color: var(--text);
 }
 .admin-order__details {
   min-width: 0;
@@ -571,6 +595,10 @@
 }
 .admin-order__accept .button {
   width: 100%;
+}
+.admin-order__accept-actions {
+  display: grid;
+  gap: 8px;
 }
 .admin-order__accept small {
   color: var(--muted);

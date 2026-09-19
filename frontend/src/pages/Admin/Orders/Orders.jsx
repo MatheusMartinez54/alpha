@@ -1,18 +1,22 @@
 import { useState } from 'react';
+import { MapPin } from 'lucide-react';
 import { useStore } from '../../../context/StoreContext.jsx';
 import EmptyState from '../../../components/Admin/EmptyState/EmptyState.jsx';
 import ProductThumbnail from '../../../components/Admin/ProductThumbnail/ProductThumbnail.jsx';
 import { formatCurrency } from '../../../utils/format.js';
 
 const statuses = ['Aberto', 'Aceito', 'Em rota', 'Finalizado'];
+const getLocationLink = (coordinates) => `https://www.google.com/maps?q=${coordinates.latitude},${coordinates.longitude}`;
 
 function OrdersPage() {
   const { orders, updateOrder, updateOrderStatus, deliveryPersons } = useStore();
   const [selectedDeliveryPersons, setSelectedDeliveryPersons] = useState({});
+  const [acceptingOrderId, setAcceptingOrderId] = useState(null);
 
-  const acceptOrder = (orderId, deliveryPersonId) => {
+  const confirmOrderAcceptance = (orderId, deliveryPersonId) => {
     if (!deliveryPersonId) return;
     updateOrder(orderId, { status: 'Aceito', deliveryPersonId });
+    setAcceptingOrderId(null);
   };
 
   const getDeliveryPerson = (deliveryPersonId) => deliveryPersons.find((deliveryPerson) => deliveryPerson.id === deliveryPersonId);
@@ -32,8 +36,24 @@ function OrdersPage() {
           {orders.map((order) => (
             <li className="admin-order" key={order.id}>
               <div>
-                <h2>{order.id}</h2>
-                <time dateTime={order.createdAt}>{new Date(order.createdAt).toLocaleString('pt-BR')}</time>
+                <div className="admin-order__heading">
+                  <div>
+                    <h2>{order.id}</h2>
+                    <time dateTime={order.createdAt}>{new Date(order.createdAt).toLocaleString('pt-BR')}</time>
+                  </div>
+                  {(order.locationLink || order.locationCoordinates) && (
+                    <a
+                      className="admin-order__location"
+                      href={order.locationLink || getLocationLink(order.locationCoordinates)}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Abrir localização do pedido ${order.id}`}
+                      title="Abrir localização"
+                    >
+                      <MapPin size={19} aria-hidden="true" />
+                    </a>
+                  )}
+                </div>
                 <dl>
                   <div>
                     <dt>Cliente</dt>
@@ -47,14 +67,10 @@ function OrdersPage() {
                       </dd>
                     </div>
                   )}
-                  <div>
-                    <dt>Entrega</dt>
-                    <dd>{order.location || 'Localização não informada'}</dd>
-                  </div>
-                  {order.reference && (
+                  {(order.complement || order.reference) && (
                     <div>
-                      <dt>Referência</dt>
-                      <dd>{order.reference}</dd>
+                      <dt>Complemento</dt>
+                      <dd>{order.complement || order.reference}</dd>
                     </div>
                   )}
                   <div>
@@ -86,30 +102,46 @@ function OrdersPage() {
               </div>
               {order.status === 'Aberto' ? (
                 <div className="admin-order__accept">
-                  <label>
-                    Entregador
-                    <select
-                      value={selectedDeliveryPersons[order.id] || ''}
-                      aria-label={`Entregador do pedido ${order.id}`}
-                      onChange={(event) => setSelectedDeliveryPersons((current) => ({ ...current, [order.id]: event.target.value }))}
-                    >
-                      <option value="">Selecionar entregador</option>
-                      {deliveryPersons.map((deliveryPerson) => (
-                        <option key={deliveryPerson.id} value={deliveryPerson.id}>
-                          {deliveryPerson.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <button
-                    type="button"
-                    className="button"
-                    disabled={!selectedDeliveryPersons[order.id]}
-                    onClick={() => acceptOrder(order.id, selectedDeliveryPersons[order.id])}
-                  >
-                    Aceitar pedido
-                  </button>
-                  {deliveryPersons.length === 0 && <small className="field-error">Cadastre um entregador antes de aceitar.</small>}
+                  {acceptingOrderId === order.id ? (
+                    <>
+                      <label>
+                        Entregador cadastrado
+                        <select
+                          value={selectedDeliveryPersons[order.id] || ''}
+                          aria-label={`Entregador do pedido ${order.id}`}
+                          onChange={(event) => setSelectedDeliveryPersons((current) => ({ ...current, [order.id]: event.target.value }))}
+                        >
+                          <option value="">Selecionar entregador</option>
+                          {deliveryPersons.map((deliveryPerson) => (
+                            <option key={deliveryPerson.id} value={deliveryPerson.id}>
+                              {deliveryPerson.name}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      {deliveryPersons.length > 0 ? (
+                        <div className="admin-order__accept-actions">
+                          <button
+                            type="button"
+                            className="button"
+                            disabled={!selectedDeliveryPersons[order.id]}
+                            onClick={() => confirmOrderAcceptance(order.id, selectedDeliveryPersons[order.id])}
+                          >
+                            Confirmar aceite
+                          </button>
+                          <button type="button" className="button secondary" onClick={() => setAcceptingOrderId(null)}>
+                            Cancelar
+                          </button>
+                        </div>
+                      ) : (
+                        <small className="field-error">Cadastre um entregador antes de aceitar.</small>
+                      )}
+                    </>
+                  ) : (
+                    <button type="button" className="button" onClick={() => setAcceptingOrderId(order.id)}>
+                      Aceitar pedido
+                    </button>
+                  )}
                 </div>
               ) : (
                 <label>

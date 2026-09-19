@@ -17,7 +17,8 @@ const AdminLogin = lazy(() => import('../pages/Admin/Login/Login.jsx'));
 
 function AppRoutes() {
   const location = useLocation();
-  const isAdminRoute = /^\/admin(?:\/|$)/.test(location.pathname);
+  const isAdminLogin = location.pathname === '/admin-login';
+  const isAdminRoute = isAdminLogin || /^\/admin(?:\/|$)/.test(location.pathname);
   const isCheckout = location.pathname === '/checkout';
   const { toast } = useCart();
   useEffect(() => {
@@ -62,7 +63,14 @@ function AppRoutes() {
         </Routes>
       </Suspense>
       {!isAdminRoute && !isCheckout && <CartToast message={toast} visible={Boolean(toast)} />}
-      {!isAdminRoute && <Footer compact={isCheckout} showFloatingContact={location.pathname === '/'} showStoreInfo={location.pathname === '/'} />}
+      {(!isAdminRoute || isAdminLogin) && (
+        <Footer
+          compact={isCheckout}
+          centered={isAdminLogin}
+          showFloatingContact={location.pathname === '/'}
+          showStoreInfo={location.pathname === '/'}
+        />
+      )}
     </>
   );
 }

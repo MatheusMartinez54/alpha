@@ -13,10 +13,10 @@ const stores = [
   },
 ];
 
-function Footer({ compact = false, showFloatingContact = false, showStoreInfo = false }) {
+function Footer({ compact = false, centered = false, showFloatingContact = false, showStoreInfo = false }) {
   return (
     <>
-      <footer className="footer">
+      <footer className={`footer${centered ? ' footer--centered' : ''}`}>
         <div className="container footer-content">
           <div className="footer-branding">
             <strong>ALPHA IMPORTES</strong>

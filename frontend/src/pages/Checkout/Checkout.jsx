@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext.jsx';
 import { useStore } from '../../context/StoreContext.jsx';
@@ -10,14 +10,16 @@ import OrderTotals from '../../components/OrderTotals/OrderTotals.jsx';
 import EmptyState from '../../components/EmptyState/EmptyState.jsx';
 
 const paymentOptions = ['PIX', 'Dinheiro', 'Cartão'];
+const getLocationLink = (coordinates) => `https://www.google.com/maps?q=${coordinates.latitude},${coordinates.longitude}`;
 
 function Checkout() {
   const { items, total, totalItems, clearCart } = useCart();
   const { addOrder } = useStore();
   const [customerName, setCustomerName] = useState('');
   const [phone, setPhone] = useState('');
-  const [location, setLocation] = useState('');
-  const [reference, setReference] = useState('');
+  const [complement, setComplement] = useState('');
+  const [locationCoordinates, setLocationCoordinates] = useState(null);
+  const [locationMessage, setLocationMessage] = useState('');
   const [payment, setPayment] = useState('');
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -34,13 +36,46 @@ function Checkout() {
     });
   };
 
+  const useCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationMessage('Seu dispositivo não oferece localização automática.');
+      return;
+    }
+    setLocationMessage('Buscando sua localização...');
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setLocationCoordinates({ latitude: coords.latitude, longitude: coords.longitude, accuracy: coords.accuracy });
+        setErrors((current) => {
+          if (!current.location) return current;
+          const next = { ...current };
+          delete next.location;
+          return next;
+        });
+        setLocationMessage('');
+      },
+      () => setLocationMessage('Não foi possível acessar sua localização. Tente novamente para continuar.'),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 },
+    );
+  };
+
+  const removeLocation = () => {
+    setLocationCoordinates(null);
+    setLocationMessage('Localização removida.');
+    setErrors((current) => {
+      if (!current.location) return current;
+      const next = { ...current };
+      delete next.location;
+      return next;
+    });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (submitting.current) return;
     const nextErrors = {};
     if (!customerName.trim()) nextErrors.customerName = 'Informe seu nome.';
     if (!phone.trim()) nextErrors.phone = 'Informe seu telefone.';
-    if (!location.trim()) nextErrors.location = 'Informe o endereço de entrega.';
+    if (!locationCoordinates) nextErrors.location = 'Anexe sua localização para continuar.';
     if (!payment) nextErrors.payment = 'Selecione a forma de pagamento.';
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) {
@@ -49,14 +84,15 @@ function Checkout() {
         : nextErrors.phone
           ? '#customer-phone'
           : nextErrors.location
-            ? '#delivery-location'
+            ? '#use-location'
             : '[name="payment"]';
       event.currentTarget.querySelector(firstField)?.focus();
       return;
     }
     if (!items.length) return;
     submitting.current = true;
-    addOrder({ items, total, location, reference, payment, customerName, phone });
+    const locationLink = getLocationLink(locationCoordinates);
+    addOrder({ items, total, location: locationLink, locationLink, complement, locationCoordinates, payment, customerName, phone });
     clearCart();
     setSubmitted(true);
   };
@@ -69,7 +105,7 @@ function Checkout() {
           announce
           icon={CheckCircle2}
           title="Pedido confirmado"
-          description={`Recebemos seu pedido para entrega em ${location}. Em breve nossa equipe vai confirmar os detalhes.`}
+          description="Recebemos seu pedido com a localização anexada. Em breve nossa equipe vai confirmar os detalhes."
           to="/produtos"
           action="Continuar comprando"
         />
@@ -90,7 +126,7 @@ function Checkout() {
         </Link>
         <span className="eyebrow">Última etapa</span>
         <h1>Finalizar compra</h1>
-        <p>Informe seus dados e o endereço para entrega.</p>
+        <p>Informe seus dados e anexe a localização para entrega.</p>
       </div>
       <form className="checkout-form" onSubmit={handleSubmit} noValidate>
         <div className="checkout-column">
@@ -132,26 +168,52 @@ function Checkout() {
             <h2>
               <span className="step-number">2</span> Localização de entrega
             </h2>
+            <div className="location-actions">
+              {!locationCoordinates && (
+                <button
+                  id="use-location"
+                  className="button secondary"
+                  type="button"
+                  onClick={useCurrentLocation}
+                  aria-describedby={errors.location ? 'location-error' : undefined}
+                >
+                  <MapPin size={17} aria-hidden="true" />
+                  Usar localização atual
+                </button>
+              )}
+              {locationMessage && (
+                <small className="location-status" role="status">
+                  {locationMessage}
+                </small>
+              )}
+              {locationCoordinates && (
+                <div className="location-confirmation">
+                  <span className="location-attached">
+                    <CheckCircle2 size={18} aria-hidden="true" />
+                    Localização anexada
+                  </span>
+                  <a className="location-link" href={getLocationLink(locationCoordinates)} target="_blank" rel="noreferrer">
+                    Visualizar localização anexada
+                  </a>
+                  <button className="button secondary location-remove" type="button" onClick={removeLocation}>
+                    Remover localização
+                  </button>
+                </div>
+              )}
+              {errors.location && (
+                <small id="location-error" className="field-error">
+                  {errors.location}
+                </small>
+              )}
+            </div>
             <FormField
-              id="delivery-location"
-              name="location"
-              label="Endereço ou localização"
+              id="delivery-complement"
+              name="complement"
+              label="Complemento"
               type="text"
-              autoComplete="street-address"
-              required
-              value={location}
-              onChange={(event) => updateField('location', setLocation, event.target.value)}
-              placeholder="Rua, número, bairro e cidade"
-              error={errors.location}
-            />
-            <FormField
-              id="delivery-reference"
-              name="reference"
-              label="Referência"
-              type="text"
-              value={reference}
-              onChange={(event) => updateField('reference', setReference, event.target.value)}
-              placeholder="Ex.: portão azul, perto da praça"
+              value={complement}
+              onChange={(event) => updateField('complement', setComplement, event.target.value)}
+              placeholder="Ex.: apartamento, bloco ou casa"
             />
           </section>
           <section className="checkout-panel">

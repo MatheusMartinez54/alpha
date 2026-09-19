@@ -295,6 +295,12 @@
 .footer small {
   font-size: 0.8125rem;
 }
+.footer--centered .footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
 @media (max-width: 559px) {
   .category-showcase--category .product-grid > :nth-child(n + 2) {
     display: none;

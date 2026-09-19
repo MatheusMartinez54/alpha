@@ -1,5 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext.jsx';
+import Logo from '../../../components/Logo/Logo.jsx';
 function AdminLogin() {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -11,7 +12,11 @@ function AdminLogin() {
   return (
     <main id="main-content" className="main auth-page">
       <div className="auth-page__panel">
-        <span className="eyebrow">Acesso restrito</span>
+        <div className="auth-page__brand">
+          <Logo />
+          <strong>ALPHA IMPORTES</strong>
+        </div>
+
         <h1>Entrar no painel</h1>
         <form className="auth-form" onSubmit={submit}>
           <label>
@@ -24,9 +29,6 @@ function AdminLogin() {
           </label>
           <button className="button">Entrar</button>
         </form>
-        <Link className="back-link" to="/">
-          Voltar para a loja
-        </Link>
       </div>
     </main>
   );
