@@ -183,6 +183,31 @@
   font-size: 0.75rem;
   line-height: 1.5;
 }
+.admin-modal__image-options {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+}
+.admin-modal__image-options > label {
+  color: var(--text);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+.admin-modal__image-options input[type='file'] {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 10px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.8125rem;
+}
+.admin-modal__image-feedback {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
 
 .admin-modal .admin-checkbox {
   display: flex;
@@ -203,28 +228,10 @@
   cursor: pointer;
 }
 
-.admin-modal__stock {
-  display: grid;
-  gap: 14px;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
-}
-
-.admin-modal__stock h4,
 .admin-modal .admin-category-products__assign h4 {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 600;
-}
-
-.admin-modal__stock-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
-}
-
-.admin-modal__field--grow {
-  flex: 1;
 }
 
 .admin-modal__actions {
@@ -284,6 +291,16 @@
 
 .admin-modal .admin-category-products__item:last-child {
   border-bottom: 0;
+}
+.admin-modal .admin-category-products__remove {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  color: #fda4af;
+}
+.admin-modal .admin-category-products__remove:hover {
+  color: #ffc1c9;
 }
 
 .admin-modal .admin-category-products__copy {
@@ -351,11 +368,6 @@
   .admin-modal__form {
     grid-template-columns: minmax(0, 1fr);
     gap: 16px;
-  }
-
-  .admin-modal__stock-row {
-    flex-direction: column;
-    align-items: stretch;
   }
 
   .admin-modal__actions .button {

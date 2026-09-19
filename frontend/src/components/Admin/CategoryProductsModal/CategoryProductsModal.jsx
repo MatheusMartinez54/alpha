@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import Modal from '../Modal/Modal.jsx';
 import ProductThumbnail from '../ProductThumbnail/ProductThumbnail.jsx';
 
-function CategoryProductsContent({ category, products, availableProducts, onClose, onAddProducts }) {
+function CategoryProductsContent({ category, products, availableProducts, onClose, onAddProducts, onRemoveProduct }) {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const currentProducts = products || [];
   const hasAvailableProducts = availableProducts && availableProducts.length > 0;
@@ -46,6 +47,15 @@ function CategoryProductsContent({ category, products, availableProducts, onClos
                   <strong>{product.name}</strong>
                   <span>{product.stock} un.</span>
                 </div>
+                <button
+                  type="button"
+                  className="admin-record__action admin-category-products__remove"
+                  aria-label={`Remover ${product.name} da categoria`}
+                  title="Remover da categoria"
+                  onClick={() => onRemoveProduct?.(product.id)}
+                >
+                  <Trash2 size={17} aria-hidden="true" />
+                </button>
               </div>
             ))
           ) : (

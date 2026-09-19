@@ -87,11 +87,6 @@ function AdminProductsPage() {
     setProducts((current) => current.map((product) => (product.id === productId ? { ...product, active: !product.active } : product)));
   };
 
-  const handleStockUpdate = (productId, value) => {
-    if (!Number.isInteger(value) || value < 0) return;
-    setProducts((current) => current.map((product) => (product.id === productId ? { ...product, stock: Number(value) } : product)));
-  };
-
   return (
     <div className="admin-page-content admin-catalog">
       <div className="admin-page-header">
@@ -174,7 +169,6 @@ function AdminProductsPage() {
         }
         onClose={handleCloseModal}
         onSubmit={editingProduct ? handleEditProduct : handleCreateProduct}
-        onStockUpdate={(value) => editingProduct && handleStockUpdate(editingProduct.id, value)}
       />
     </div>
   );

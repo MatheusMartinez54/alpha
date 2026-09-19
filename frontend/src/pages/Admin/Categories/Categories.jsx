@@ -62,9 +62,7 @@ function CategoriesPage() {
   };
 
   const handleToggleCategory = (categoryId) => {
-    setCategories((current) =>
-      current.map((category) => (category.id === categoryId ? { ...category, active: !category.active } : category)),
-    );
+    setCategories((current) => current.map((category) => (category.id === categoryId ? { ...category, active: !category.active } : category)));
   };
 
   const getCategoryProducts = (categoryId) => products.filter((product) => product.categoryId === categoryId);
@@ -81,6 +79,10 @@ function CategoriesPage() {
       ),
     );
     setIsProductsModalOpen(false);
+  };
+
+  const handleRemoveProductFromCategory = (productId) => {
+    setProducts((current) => current.map((product) => (product.id === productId ? { ...product, categoryId: '', categoryName: '' } : product)));
   };
 
   return (
@@ -169,6 +171,7 @@ function CategoriesPage() {
         availableProducts={products.filter((product) => !product.categoryId)}
         onClose={() => setIsProductsModalOpen(false)}
         onAddProducts={handleAddProductsToCategory}
+        onRemoveProduct={handleRemoveProductFromCategory}
       />
     </div>
   );

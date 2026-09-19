@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from 'react';
+import { useId, useState } from 'react';
 import Modal from '../Modal/Modal.jsx';
 import ProductThumbnail from '../ProductThumbnail/ProductThumbnail.jsx';
 
@@ -13,15 +13,13 @@ const defaultValues = {
   stock: 0,
 };
 
-function ProductForm({ mode, categories, initialValues, onClose, onSubmit, onStockUpdate }) {
+function ProductForm({ mode, categories, initialValues, onClose, onSubmit }) {
   const [form, setForm] = useState(initialValues || defaultValues);
-  const [stockFeedback, setStockFeedback] = useState(null);
-  const stockRef = useRef(null);
+  const [imageFeedback, setImageFeedback] = useState('');
   const fieldId = useId();
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
-    if (name === 'stock') setStockFeedback(null);
     setForm((current) => ({
       ...current,
       [name]: type === 'checkbox' ? checked : value,
@@ -33,17 +31,25 @@ function ProductForm({ mode, categories, initialValues, onClose, onSubmit, onSto
     onSubmit(form);
   };
 
-  const handleStockUpdate = () => {
-    const stock = Number(form.stock);
-    if (form.stock === '' || !Number.isInteger(stock) || stock < 0) {
-      setStockFeedback({ error: true, message: 'Informe uma quantidade inteira igual ou maior que zero.' });
-      stockRef.current?.focus();
+  const handleImageFile = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setImageFeedback('Escolha um arquivo de imagem válido.');
       return;
     }
-    if (onStockUpdate) {
-      onStockUpdate(stock);
-      setStockFeedback({ error: false, message: `Estoque atualizado: ${stock} ${stock === 1 ? 'unidade' : 'unidades'}.` });
+    if (file.size > 2 * 1024 * 1024) {
+      setImageFeedback('A imagem deve ter no máximo 2 MB.');
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setForm((current) => ({ ...current, image: reader.result }));
+      setImageFeedback('Imagem carregada.');
+    };
+    reader.onerror = () => setImageFeedback('Não foi possível carregar a imagem.');
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -69,29 +75,35 @@ function ProductForm({ mode, categories, initialValues, onClose, onSubmit, onSto
             <ProductThumbnail src={form.image} alt={form.name ? `Prévia de ${form.name}` : 'Prévia do produto'} />
             <div className="admin-modal__image-copy">
               <strong>Prévia da imagem</strong>
-              <span>Informe o endereço da imagem no campo abaixo.</span>
+              <span>Use um link ou escolha um arquivo do dispositivo.</span>
             </div>
           </div>
-          <input
-            id={`${fieldId}-image`}
-            type="url"
-            name="image"
-            value={form.image || ''}
-            onChange={handleChange}
-            placeholder="https://exemplo.com/imagem.jpg"
-          />
+          <div className="admin-modal__image-options">
+            <label htmlFor={`${fieldId}-image`}>Link da imagem</label>
+            <input
+              id={`${fieldId}-image`}
+              type="url"
+              name="image"
+              value={typeof form.image === 'string' && !form.image.startsWith('data:') ? form.image : ''}
+              onChange={(event) => {
+                setImageFeedback('');
+                handleChange(event);
+              }}
+              placeholder="https://exemplo.com/imagem.jpg"
+            />
+            <label htmlFor={`${fieldId}-image-file`}>Ou escolha um arquivo</label>
+            <input id={`${fieldId}-image-file`} type="file" accept="image/*" onChange={handleImageFile} />
+            {imageFeedback && (
+              <small className="admin-modal__image-feedback" role="status">
+                {imageFeedback}
+              </small>
+            )}
+          </div>
         </div>
 
         <div className="admin-modal__field">
           <label htmlFor={`${fieldId}-name`}>Nome</label>
-          <input
-            id={`${fieldId}-name`}
-            name="name"
-            value={form.name || ''}
-            onChange={handleChange}
-            placeholder="Digite o nome do produto"
-            required
-          />
+          <input id={`${fieldId}-name`} name="name" value={form.name || ''} onChange={handleChange} placeholder="Digite o nome do produto" required />
         </div>
 
         <div className="admin-modal__field">
@@ -154,44 +166,6 @@ function ProductForm({ mode, categories, initialValues, onClose, onSubmit, onSto
             <span>Produto ativo</span>
           </label>
         </div>
-
-        {mode === 'edit' && (
-          <div className="admin-modal__stock admin-modal__field--full">
-            <div className="admin-modal__stock-header">
-              <h4>Estoque</h4>
-            </div>
-
-            <div className="admin-modal__stock-row">
-              <div className="admin-modal__field admin-modal__field--grow">
-                <label htmlFor={`${fieldId}-stock`}>Quantidade atual</label>
-                <input
-                  ref={stockRef}
-                  id={`${fieldId}-stock`}
-                  name="stock"
-                  type="number"
-                  min="0"
-                  step="1"
-                  inputMode="numeric"
-                  required
-                  value={form.stock ?? 0}
-                  onChange={handleChange}
-                  aria-invalid={stockFeedback?.error || undefined}
-                  aria-describedby={stockFeedback ? `${fieldId}-stock-feedback` : undefined}
-                />
-              </div>
-              <button type="button" className="button secondary" onClick={handleStockUpdate}>
-                Atualizar estoque
-              </button>
-            </div>
-            <p
-              id={`${fieldId}-stock-feedback`}
-              className={`admin-stock-feedback${stockFeedback?.error ? ' admin-stock-feedback--error' : ''}`}
-              role="status"
-            >
-              {stockFeedback?.message}
-            </p>
-          </div>
-        )}
       </div>
     </Modal>
   );

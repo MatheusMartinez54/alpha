@@ -1,10 +1,11 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Bike, ChevronLeft, ChevronRight, LayoutDashboard, LogOut, Package, ShoppingCart, Tags, X } from 'lucide-react';
+import { Bike, ChevronLeft, ChevronRight, ClipboardList, LayoutDashboard, LogOut, Package, ShoppingCart, Tags, X } from 'lucide-react';
 import Logo from '../../Logo/Logo.jsx';
 
 const menuItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/produtos', label: 'Produtos', icon: Package },
+  { to: '/admin/estoque', label: 'Estoque', icon: ClipboardList },
   { to: '/admin/pedidos', label: 'Pedidos', icon: ShoppingCart },
   { to: '/admin/entregadores', label: 'Entregadores', icon: Bike },
   { to: '/admin/categorias', label: 'Categorias', icon: Tags },

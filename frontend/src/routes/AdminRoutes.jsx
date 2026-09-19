@@ -5,6 +5,7 @@ import ProductsPage from '../pages/Admin/Products/Products.jsx';
 import CategoriesPage from '../pages/Admin/Categories/Categories.jsx';
 import OrdersPage from '../pages/Admin/Orders/Orders.jsx';
 import DeliveryPersonsPage from '../pages/Admin/DeliveryPersons/DeliveryPersons.jsx';
+import StockPage from '../pages/Admin/Stock/Stock.jsx';
 import EmptyState from '../components/Admin/EmptyState/EmptyState.jsx';
 
 function AdminPage({ title, description }) {
@@ -28,6 +29,15 @@ function AdminRoutes() {
         element={
           <AdminLayout title="Produtos" subtitle="Gerencie os produtos da sua loja">
             <ProductsPage />
+          </AdminLayout>
+        }
+      />
+
+      <Route
+        path="estoque"
+        element={
+          <AdminLayout title="Estoque" subtitle="Controle as entradas e saídas dos produtos">
+            <StockPage />
           </AdminLayout>
         }
       />

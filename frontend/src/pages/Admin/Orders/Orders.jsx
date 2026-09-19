@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MapPin } from 'lucide-react';
 import { useStore } from '../../../context/StoreContext.jsx';
 import EmptyState from '../../../components/Admin/EmptyState/EmptyState.jsx';
+import Modal from '../../../components/Admin/Modal/Modal.jsx';
 import ProductThumbnail from '../../../components/Admin/ProductThumbnail/ProductThumbnail.jsx';
 import { formatCurrency } from '../../../utils/format.js';
 
@@ -11,12 +12,29 @@ const getLocationLink = (coordinates) => `https://www.google.com/maps?q=${coordi
 function OrdersPage() {
   const { orders, updateOrder, updateOrderStatus, deliveryPersons } = useStore();
   const [selectedDeliveryPersons, setSelectedDeliveryPersons] = useState({});
-  const [acceptingOrderId, setAcceptingOrderId] = useState(null);
+  const [acceptingOrder, setAcceptingOrder] = useState(null);
+  const [acceptanceObservation, setAcceptanceObservation] = useState('');
 
-  const confirmOrderAcceptance = (orderId, deliveryPersonId) => {
+  const openAcceptanceModal = (order) => {
+    setAcceptingOrder(order);
+    setAcceptanceObservation('');
+  };
+
+  const closeAcceptanceModal = () => {
+    setAcceptingOrder(null);
+    setAcceptanceObservation('');
+  };
+
+  const confirmOrderAcceptance = (event) => {
+    event.preventDefault();
+    const deliveryPersonId = selectedDeliveryPersons[acceptingOrder.id];
     if (!deliveryPersonId) return;
-    updateOrder(orderId, { status: 'Aceito', deliveryPersonId });
-    setAcceptingOrderId(null);
+    updateOrder(acceptingOrder.id, {
+      status: 'Aceito',
+      deliveryPersonId,
+      acceptanceObservation: acceptanceObservation.trim(),
+    });
+    closeAcceptanceModal();
   };
 
   const getDeliveryPerson = (deliveryPersonId) => deliveryPersons.find((deliveryPerson) => deliveryPerson.id === deliveryPersonId);
@@ -102,46 +120,9 @@ function OrdersPage() {
               </div>
               {order.status === 'Aberto' ? (
                 <div className="admin-order__accept">
-                  {acceptingOrderId === order.id ? (
-                    <>
-                      <label>
-                        Entregador cadastrado
-                        <select
-                          value={selectedDeliveryPersons[order.id] || ''}
-                          aria-label={`Entregador do pedido ${order.id}`}
-                          onChange={(event) => setSelectedDeliveryPersons((current) => ({ ...current, [order.id]: event.target.value }))}
-                        >
-                          <option value="">Selecionar entregador</option>
-                          {deliveryPersons.map((deliveryPerson) => (
-                            <option key={deliveryPerson.id} value={deliveryPerson.id}>
-                              {deliveryPerson.name}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      {deliveryPersons.length > 0 ? (
-                        <div className="admin-order__accept-actions">
-                          <button
-                            type="button"
-                            className="button"
-                            disabled={!selectedDeliveryPersons[order.id]}
-                            onClick={() => confirmOrderAcceptance(order.id, selectedDeliveryPersons[order.id])}
-                          >
-                            Confirmar aceite
-                          </button>
-                          <button type="button" className="button secondary" onClick={() => setAcceptingOrderId(null)}>
-                            Cancelar
-                          </button>
-                        </div>
-                      ) : (
-                        <small className="field-error">Cadastre um entregador antes de aceitar.</small>
-                      )}
-                    </>
-                  ) : (
-                    <button type="button" className="button" onClick={() => setAcceptingOrderId(order.id)}>
-                      Aceitar pedido
-                    </button>
-                  )}
+                  <button type="button" className="button" onClick={() => openAcceptanceModal(order)}>
+                    Aceitar pedido
+                  </button>
                 </div>
               ) : (
                 <label>
@@ -156,11 +137,60 @@ function OrdersPage() {
                     ))}
                   </select>
                   {getDeliveryPerson(order.deliveryPersonId) && <small>Entregador: {getDeliveryPerson(order.deliveryPersonId).name}</small>}
+                  {order.acceptanceObservation && <small>Observação: {order.acceptanceObservation}</small>}
                 </label>
               )}
             </li>
           ))}
         </ul>
+      )}
+      {acceptingOrder && (
+        <Modal
+          title={`Aceitar pedido ${acceptingOrder.id}`}
+          compact
+          onClose={closeAcceptanceModal}
+          onSubmit={confirmOrderAcceptance}
+          footer={
+            <>
+              <button type="button" className="button secondary" onClick={closeAcceptanceModal}>
+                Cancelar
+              </button>
+              <button type="submit" className="button" disabled={!selectedDeliveryPersons[acceptingOrder.id]}>
+                Confirmar aceite
+              </button>
+            </>
+          }
+        >
+          <div className="admin-modal__form">
+            <div className="admin-modal__field admin-modal__field--full">
+              <label htmlFor={`delivery-person-${acceptingOrder.id}`}>Entregador cadastrado</label>
+              <select
+                id={`delivery-person-${acceptingOrder.id}`}
+                value={selectedDeliveryPersons[acceptingOrder.id] || ''}
+                onChange={(event) => setSelectedDeliveryPersons((current) => ({ ...current, [acceptingOrder.id]: event.target.value }))}
+                required
+              >
+                <option value="">Selecionar entregador</option>
+                {deliveryPersons.map((deliveryPerson) => (
+                  <option key={deliveryPerson.id} value={deliveryPerson.id}>
+                    {deliveryPerson.name}
+                  </option>
+                ))}
+              </select>
+              {deliveryPersons.length === 0 && <small className="field-error">Cadastre um entregador antes de aceitar.</small>}
+            </div>
+            <div className="admin-modal__field admin-modal__field--full">
+              <label htmlFor={`acceptance-observation-${acceptingOrder.id}`}>Observação</label>
+              <textarea
+                id={`acceptance-observation-${acceptingOrder.id}`}
+                value={acceptanceObservation}
+                onChange={(event) => setAcceptanceObservation(event.target.value)}
+                placeholder="Escreva uma observação para este pedido"
+                rows={4}
+              />
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   );

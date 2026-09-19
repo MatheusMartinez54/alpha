@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bike, Plus, Trash2 } from 'lucide-react';
+import { Bike, Pencil, Plus, Trash2 } from 'lucide-react';
 import EmptyState from '../../../components/Admin/EmptyState/EmptyState.jsx';
 import Modal from '../../../components/Admin/Modal/Modal.jsx';
 import { useStore } from '../../../context/StoreContext.jsx';
@@ -17,6 +17,7 @@ function DeliveryPersonsPage() {
   const { deliveryPersons, setDeliveryPersons } = useStore();
   const [form, setForm] = useState(emptyForm);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingDeliveryPerson, setEditingDeliveryPerson] = useState(null);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -25,7 +26,28 @@ function DeliveryPersonsPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setDeliveryPersons((current) => [{ ...form, id: `ent-${Date.now()}` }, ...current]);
+    if (editingDeliveryPerson) {
+      setDeliveryPersons((current) => current.map((person) => (person.id === editingDeliveryPerson.id ? { ...form, id: person.id } : person)));
+    } else {
+      setDeliveryPersons((current) => [{ ...form, id: `ent-${Date.now()}` }, ...current]);
+    }
+    closeModal();
+  };
+
+  const openCreateModal = () => {
+    setEditingDeliveryPerson(null);
+    setForm(emptyForm);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (deliveryPerson) => {
+    setEditingDeliveryPerson(deliveryPerson);
+    setForm({ ...deliveryPerson });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setEditingDeliveryPerson(null);
     setForm(emptyForm);
     setIsModalOpen(false);
   };
@@ -47,7 +69,7 @@ function DeliveryPersonsPage() {
         <span className="admin-toolbar__summary">
           {deliveryPersons.length} {deliveryPersons.length === 1 ? 'entregador cadastrado' : 'entregadores cadastrados'}
         </span>
-        <button type="button" className="button" onClick={() => setIsModalOpen(true)}>
+        <button type="button" className="button" onClick={openCreateModal}>
           <Plus size={16} aria-hidden="true" />
           Cadastrar entregador
         </button>
@@ -82,14 +104,26 @@ function DeliveryPersonsPage() {
                   <dd>{deliveryPerson.rg}</dd>
                 </div>
               </dl>
-              <button
-                type="button"
-                className="admin-record__action"
-                aria-label={`Remover ${deliveryPerson.name}`}
-                onClick={() => handleRemove(deliveryPerson.id)}
-              >
-                <Trash2 size={18} aria-hidden="true" />
-              </button>
+              <div className="delivery-person__actions">
+                <button
+                  type="button"
+                  className="admin-record__action"
+                  aria-label={`Editar ${deliveryPerson.name}`}
+                  title={`Editar ${deliveryPerson.name}`}
+                  onClick={() => openEditModal(deliveryPerson)}
+                >
+                  <Pencil size={18} aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  className="admin-record__action"
+                  aria-label={`Remover ${deliveryPerson.name}`}
+                  title={`Remover ${deliveryPerson.name}`}
+                  onClick={() => handleRemove(deliveryPerson.id)}
+                >
+                  <Trash2 size={18} aria-hidden="true" />
+                </button>
+              </div>
             </li>
           ))}
         </ul>
@@ -97,16 +131,16 @@ function DeliveryPersonsPage() {
 
       {isModalOpen && (
         <Modal
-          title="Cadastrar entregador"
-          onClose={() => setIsModalOpen(false)}
+          title={editingDeliveryPerson ? 'Editar entregador' : 'Cadastrar entregador'}
+          onClose={closeModal}
           onSubmit={handleSubmit}
           footer={
             <>
-              <button type="button" className="button secondary" onClick={() => setIsModalOpen(false)}>
+              <button type="button" className="button secondary" onClick={closeModal}>
                 Cancelar
               </button>
               <button type="submit" className="button">
-                Cadastrar entregador
+                {editingDeliveryPerson ? 'Salvar alterações' : 'Cadastrar entregador'}
               </button>
             </>
           }
@@ -114,7 +148,7 @@ function DeliveryPersonsPage() {
           <div className="delivery-person-form delivery-person-form--modal">
             <div className="delivery-person-form__header">
               <div>
-                <h2>Dados do entregador</h2>
+                <h2>{editingDeliveryPerson ? 'Editar dados' : 'Dados do entregador'}</h2>
                 <p>O cadastro ficará disponível para aceitar pedidos.</p>
               </div>
               <Bike size={24} aria-hidden="true" />
