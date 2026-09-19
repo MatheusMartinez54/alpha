@@ -3,6 +3,7 @@
   max-width: calc(100% - 32px);
   max-height: min(85vh, calc(100vh - 32px));
   max-height: min(85dvh, calc(100dvh - 32px));
+  box-sizing: border-box;
   margin: auto;
   padding: 0;
   overflow: hidden;
@@ -121,7 +122,9 @@
   font: inherit;
   font-size: 1rem;
   line-height: 1.4;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .admin-modal__field select {
@@ -326,6 +329,13 @@
 }
 
 @media (max-width: 639px) {
+  .admin-modal {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    margin: auto;
+  }
+
   .admin-modal__header,
   .admin-modal__actions {
     padding: 16px;
@@ -346,7 +356,11 @@
   }
 
   .admin-modal__actions .button {
-    flex: 1;
+    flex: 1 1 140px;
     padding-inline: 12px;
+  }
+
+  .admin-modal__actions {
+    justify-content: stretch;
   }
 }
